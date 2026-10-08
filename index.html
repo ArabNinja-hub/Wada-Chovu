@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Marks the document as JavaScript-enabled so reveal animations can start hidden. -->
+    <script>document.documentElement.classList.add('js');</script>
+    <!--head-meta-->
+    <!-- Preload the Latin font so it is ready for first paint (see font-display in tokens.css). -->
+    <link
+      rel="preload"
+      href="/node_modules/@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <!-- The full page is prerendered here from src/render at build and dev time. -->
+    <!--app-html-->
+    <script type="module" src="/src/client/main.ts"></script>
+  </body>
+</html>
