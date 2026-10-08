@@ -8,6 +8,7 @@ import { getTexture, type TextureKey } from '../content/assets.ts';
 export class TextureLibrary {
   private cache = new Map<TextureKey, THREE.Texture>();
   private blob: THREE.Texture | null = null;
+  private disc: THREE.Texture | null = null;
 
   constructor(private readonly renderer: THREE.WebGLRenderer) {}
 
@@ -30,6 +31,32 @@ export class TextureLibrary {
     tex.anisotropy = Math.min(4, this.renderer.capabilities.getMaxAnisotropy());
     this.cache.set(key, tex);
     return tex;
+  }
+
+  /**
+   * Soft radial disc: opaque at the centre, fading to nothing at the edge. Used as the
+   * ground "light pool" under each scene, so objects sit on a lit studio floor rather than
+   * floating in empty space. The material colour tints it per scene.
+   */
+  softDisc(): THREE.Texture {
+    if (!this.disc) {
+      const size = 256;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.55, 'rgba(255,255,255,0.55)');
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, size, size);
+      }
+      this.disc = new THREE.CanvasTexture(canvas);
+      this.disc.colorSpace = THREE.SRGBColorSpace;
+    }
+    return this.disc;
   }
 
   /** Soft radial shadow used as a contact shadow under objects. */

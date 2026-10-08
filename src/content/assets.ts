@@ -181,6 +181,11 @@ export const ASSETS = {
     src: '/brand/wada-chovu-logo.jpeg',
     note: 'Printed on the front label of placeholder cartons. Swap for product label artwork or a product photo.',
   },
+  'texture.productCard': {
+    kind: 'texture',
+    src: '/brand/wada-chovu-logo.jpeg',
+    note: 'Product photo shown on 3D product-photo cards (the `card` placeholder). Defaults to the logo so the demo shows the brand mark, not an empty frame. Replace with a real product photo.',
+  },
 
   // ---------------------------------------------------------------------------
   // 3D models (placeholder geometry until a .glb / .gltf url is set)
@@ -220,6 +225,12 @@ export const ASSETS = {
     builder: 'plinth',
     fit: 2,
     note: 'Round display base.',
+  },
+  'model.card': {
+    kind: 'model',
+    builder: 'card',
+    fit: 1,
+    note: 'Product-photo card (product imagery in a 3D scene). To show a product photo instead of a 3D object, set that model key\'s `builder` to \'card\' and point `texture.productCard` at the photo.',
   },
 } satisfies Record<string, AssetDefinition>;
 

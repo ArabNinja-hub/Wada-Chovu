@@ -59,13 +59,45 @@ The 3D objects are model keys: `model.carton`, `model.pallet`, `model.tin`, `mod
 
 What happens:
 - The file is loaded on demand, only when a 3D scene needs it. The GLTF loader is a separate chunk.
-- The model is scaled so its largest dimension equals `fit`, and its base is centred on the origin. Scenes place models by their base, so the composition is unchanged.
+- The model is normalised to a contract: its largest dimension becomes `fit`, it is centred on X and Z, and its base sits on Y = 0.
+- Scenes place models by measuring them (`src/three/layout.ts`): stacks rest on each other, shelf bays fit their contents, display items sit on a ring inside the plinth, and the camera re-frames the measured content. So a real model of any proportions is composed and framed automatically. No scene, lighting, camera, scroll-animation or responsive code needs to change.
 - If the file is missing or fails to load, the placeholder is used and a warning is logged. The page keeps working.
 
 Notes:
 - Animated or skinned models are not supported by the current clone step. Export them static, or ask for an update that uses `SkeletonUtils`.
 - Materials and textures inside the .glb are used as exported. Scenes add lights and shadows around them.
 - Keep the model's real proportions. `fit` sets the size, not the shape.
+
+---
+
+## 2b. Replace a 3D object with product imagery (no model needed)
+
+If you have product photos but not 3D models, the `card` builder shows a product photo on a framed panel in place of a 3D object. Same slot, same animation, same lighting — only the asset changes.
+
+1. Add the product photo to `public/` and point `texture.productCard` at it in `src/content/assets.ts`:
+
+   ```ts
+   'texture.productCard': {
+     kind: 'texture',
+     src: '/media/products/rice-25kg.jpg',
+     note: 'Product photo shown on 3D product-photo cards.',
+   },
+   ```
+
+2. Change the model key you want to become imagery to use the card builder:
+
+   ```ts
+   'model.carton': {
+     kind: 'model',
+     builder: 'card',   // was 'carton'
+     fit: 1,
+     note: 'Now shows a product photo card instead of a 3D carton.',
+   },
+   ```
+
+3. Rebuild. Everywhere that key appeared, a product-photo card now stands in its place.
+
+The featured scene uses `model.card` for one display item, so you can see a card alongside 3D containers. The card shows the supplied logo by default (a brand tag), not an invented product.
 
 ---
 
@@ -81,6 +113,8 @@ The label printed on placeholder cartons comes from `texture.cartonLabel`:
 ```
 
 Use a file with a plain background and a 3:2-ish ratio. The label is printed on the front face of each carton.
+
+A second texture, `texture.productCard`, is shown on product-photo cards (see section 2b). It defaults to the logo as well.
 
 ---
 

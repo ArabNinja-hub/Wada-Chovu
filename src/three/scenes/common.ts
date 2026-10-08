@@ -1,10 +1,12 @@
 import * as THREE from 'three';
 import type { SceneContext } from '../types.ts';
 import { configureShadowLight } from '../rig.ts';
+import { boundsOf } from '../layout.ts';
 
 /**
- * Shared lighting and contact-shadow helpers. Every scene uses the same lighting rig, so the
- * three scenes feel like one photographic set.
+ * Shared lighting, ground and contact-shadow helpers. Every scene uses the same rig, so the
+ * three scenes feel like one photographic set. All placement helpers here are measured from
+ * the real objects, so they keep working when a placeholder is swapped for a real model.
  */
 
 type Vec3 = [number, number, number];
@@ -44,8 +46,38 @@ export function addLighting(scene: THREE.Scene, ctx: SceneContext, preset: Light
 }
 
 /**
- * Soft contact shadow under an object. It is a textured plane, so it costs almost nothing
- * and works on every quality tier. Real shadow maps are reserved for the high tier.
+ * Soft radial "light pool" on the floor. Objects sit on a lit studio patch rather than
+ * floating in empty space, and on the high quality tier the pool catches the real shadow maps.
+ * The colour is tinted per scene to suit its backdrop.
+ */
+export function addGroundPool(
+  parent: THREE.Object3D,
+  ctx: SceneContext,
+  options: { radius: number; color: THREE.ColorRepresentation; opacity?: number; receiveShadow?: boolean },
+): THREE.Mesh {
+  const material = new THREE.MeshStandardMaterial({
+    color: options.color,
+    map: ctx.textures.softDisc(),
+    roughness: 1,
+    metalness: 0,
+    transparent: true,
+    opacity: options.opacity ?? 1,
+    depthWrite: false,
+  });
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(1, 72), material);
+  disc.scale.setScalar(options.radius);
+  disc.rotation.x = -Math.PI / 2;
+  disc.position.y = 0.001;
+  disc.receiveShadow = options.receiveShadow ?? false;
+  disc.renderOrder = -2;
+  parent.add(disc);
+  return disc;
+}
+
+/**
+ * Soft contact shadow under an object. It is a textured plane, so it costs almost nothing and
+ * works on every quality tier. Real shadow maps are reserved for the high tier, where the
+ * ground pool catches them.
  */
 export function addContactShadow(
   parent: THREE.Object3D,
@@ -66,6 +98,26 @@ export function addContactShadow(
   plane.position.set(at.x, (at.y ?? 0) + 0.002, at.z);
   plane.renderOrder = -1;
   parent.add(plane);
+}
+
+/**
+ * A contact shadow sized and centred from an object's measured footprint. Use this instead of
+ * hard-coded shadow sizes so the shadow always matches whatever model is loaded.
+ */
+export function contactShadowFor(
+  parent: THREE.Object3D,
+  ctx: SceneContext,
+  object: THREE.Object3D,
+  opacity = 0.3,
+): void {
+  const b = boundsOf(object);
+  addContactShadow(
+    parent,
+    ctx,
+    { x: b.center.x, y: b.min.y, z: b.center.z },
+    { width: Math.max(b.size.x, 0.05) * 1.15, depth: Math.max(b.size.z, 0.05) * 1.15 },
+    { opacity },
+  );
 }
 
 /** Small deterministic random source, so compositions are identical on every visit. */

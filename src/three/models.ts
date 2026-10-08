@@ -50,31 +50,44 @@ export class ModelLibrary {
   }
 
   private normalise(source: THREE.Object3D, fit: number): THREE.Object3D {
-    // `outer` is returned to the scene, which owns its position and rotation.
-    // `inner` carries the normalisation (scale and pivot) so it never fights with the scene.
-    const outer = new THREE.Group();
-    const inner = new THREE.Group();
-    inner.add(source);
-    outer.add(inner);
-
-    outer.updateMatrixWorld(true);
-    const size = new THREE.Box3().setFromObject(outer).getSize(new THREE.Vector3());
-    const largest = Math.max(size.x, size.y, size.z) || 1;
-    inner.scale.setScalar(fit / largest);
-
-    outer.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(outer);
-    const center = box.getCenter(new THREE.Vector3());
-    inner.position.set(-center.x, -box.min.y, -center.z);
-    outer.updateMatrixWorld(true);
-
-    outer.traverse((child) => {
-      const mesh = child as THREE.Mesh;
-      if (mesh.isMesh) {
-        mesh.castShadow = this.profile.shadows;
-        mesh.receiveShadow = this.profile.shadows;
-      }
-    });
-    return outer;
+    return normaliseModel(source, fit, this.profile.shadows);
   }
+}
+
+/**
+ * Normalise any model to a common contract:
+ *   - the largest dimension becomes `fit`
+ *   - the model is centred on X and Z
+ *   - its base sits on Y = 0
+ *   - meshes cast and receive shadows when `castShadows` is set
+ *
+ * `outer` is returned to the scene, which owns its position and rotation. `inner` carries
+ * the normalisation (scale and pivot) so it never fights with the scene. Every helper in
+ * layout.ts relies on this contract, which is what makes models swappable.
+ */
+export function normaliseModel(source: THREE.Object3D, fit: number, castShadows: boolean): THREE.Object3D {
+  const outer = new THREE.Group();
+  const inner = new THREE.Group();
+  inner.add(source);
+  outer.add(inner);
+
+  outer.updateMatrixWorld(true);
+  const size = new THREE.Box3().setFromObject(outer).getSize(new THREE.Vector3());
+  const largest = Math.max(size.x, size.y, size.z) || 1;
+  inner.scale.setScalar(fit / largest);
+
+  outer.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(outer);
+  const center = box.getCenter(new THREE.Vector3());
+  inner.position.set(-center.x, -box.min.y, -center.z);
+  outer.updateMatrixWorld(true);
+
+  outer.traverse((child) => {
+    const mesh = child as THREE.Mesh;
+    if (mesh.isMesh) {
+      mesh.castShadow = castShadows;
+      mesh.receiveShadow = castShadows;
+    }
+  });
+  return outer;
 }

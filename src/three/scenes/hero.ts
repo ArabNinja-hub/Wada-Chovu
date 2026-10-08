@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 import type { FrameState, SceneFactory, SceneHandle } from '../types.ts';
-import { addContactShadow, addLighting, castShadows, seededRandom } from './common.ts';
+import { addGroundPool, addLighting, castShadows, contactShadowFor, seededRandom } from './common.ts';
 import { bob, damp, frameCamera } from '../rig.ts';
+import { arrangeGrid, boundsOf, fitLargest, fitWithin, frameContent, heightOf, restBaseAt } from '../layout.ts';
 
 /**
- * Hero scene: a wholesale stack on a pallet, with two containers at the base and one carton
- * floating above. It is calm and lit as a studio product set. It holds still for reduced motion.
+ * Hero scene: a branded stack on a pallet with containers at the base and one carton floating
+ * above. Everything is placed from measured sizes, so swapping any model keeps the layout.
+ * The camera frames the measured content, so a different-sized model is framed automatically.
  */
 export const createHeroScene: SceneFactory = async (ctx) => {
   const scene = new THREE.Scene();
@@ -13,103 +15,132 @@ export const createHeroScene: SceneFactory = async (ctx) => {
 
   addLighting(scene, ctx, {
     key: { color: 0xfff1dc, intensity: 2.7, position: [-3.5, 6, 5] },
-    fill: { color: 0xd6ecff, intensity: 0.6, position: [4, 2.5, 3] },
+    fill: { color: 0xd6ecff, intensity: 0.7, position: [4, 2.5, 3] },
     rim: { color: 0x06fc07, intensity: 1.1, position: [3.5, 4, -5] },
     hemi: { sky: 0xe7f7ea, ground: 0x143a1f, intensity: 1.1 },
     shadowExtent: 2.4,
     environmentIntensity: 0.55,
   });
 
+  // Ground pool and content are separate groups, so the camera frames only the content.
+  const ground = new THREE.Group();
+  scene.add(ground);
+  addGroundPool(ground, ctx, { radius: 2.4, color: 0x3a8a4a, opacity: 0.5, receiveShadow: ctx.profile.shadows });
+
   const root = new THREE.Group();
   scene.add(root);
+  const random = seededRandom(7);
 
-  // Base: pallet and two containers.
+  // Base pallet.
   const pallet = await ctx.models.instance('model.pallet');
   root.add(pallet);
+  const pb = boundsOf(pallet);
+  const palletTop = pb.max.y;
+  const palletW = pb.size.x;
+  const palletD = pb.size.z;
 
-  const tinA = await ctx.models.instance('model.tin');
-  tinA.position.set(0.92, 0, 0.36);
-  tinA.scale.setScalar(0.5);
-  const tinB = await ctx.models.instance('model.tin');
-  tinB.position.set(0.98, 0, -0.26);
-  tinB.scale.setScalar(0.42);
-  const sack = await ctx.models.instance('model.sack');
-  sack.position.set(-0.94, 0, -0.12);
-  sack.scale.setScalar(0.62);
-  root.add(tinA, tinB, sack);
+  // Stack of cartons: 4 on the pallet, 2 above, 1 on top. Each carton is scaled to fit a
+  // cell on the pallet, so any carton model produces a neat, non-overlapping stack.
+  const stack = new THREE.Group();
+  root.add(stack);
+  const gap = 0.015;
+  const margin = 0.92;
+  const cellW = (palletW * margin) / 2 - gap / 2;
+  const cellD = (palletD * margin) / 2 - gap / 2;
 
-  // Stack: two layers of four and two rotated cartons, then one floating above.
-  const CARTON = 0.56;
-  const layerOne: Array<[number, number, number]> = [
-    [-0.3, 0.12, -0.2],
-    [0.3, 0.12, -0.2],
-    [-0.3, 0.12, 0.2],
-    [0.3, 0.12, 0.2],
-  ];
-  const layerTwo: Array<[number, number, number]> = [
-    [-0.2, 0.456, 0],
-    [0.2, 0.456, 0],
-  ];
-  const random = seededRandom(7);
-  const stack: THREE.Object3D[] = [];
-  for (const [x, y, z] of layerOne) {
+  const makeCarton = async () => {
     const c = await ctx.models.instance('model.carton');
-    c.position.set(x, y, z);
-    c.scale.setScalar(CARTON);
+    fitWithin(c, { x: cellW, y: 1e6, z: cellD });
     c.rotation.y = (random() - 0.5) * 0.05;
-    stack.push(c);
-  }
-  for (const [x, y, z] of layerTwo) {
-    const c = await ctx.models.instance('model.carton');
-    c.position.set(x, y, z);
-    c.scale.setScalar(CARTON);
-    c.rotation.y = Math.PI / 2;
-    stack.push(c);
-  }
-  root.add(...stack);
+    stack.add(c);
+    return c;
+  };
 
-  const floating = await ctx.models.instance('model.carton');
-  floating.scale.setScalar(CARTON * 0.92);
-  floating.position.set(0.04, 1.3, 0.02);
-  root.add(floating);
+  const layer1: THREE.Object3D[] = [];
+  for (let i = 0; i < 4; i++) layer1.push(await makeCarton());
+  const cb = boundsOf(layer1[0]);
+  const spacingX = cb.size.x + gap;
+  const spacingZ = cb.size.z + gap;
+  const h1 = arrangeGrid(layer1, { y: palletTop, cols: 2, spacingX, spacingZ });
 
-  // Contact shadows are cheap on every tier. Real shadows come from the key light on high.
+  const layer2: THREE.Object3D[] = [];
+  for (let i = 0; i < 2; i++) layer2.push(await makeCarton());
+  const h2 = arrangeGrid(layer2, { y: palletTop + h1 + gap, cols: 2, spacingX, spacingZ });
+
+  const topCarton = await makeCarton();
+  topCarton.position.x = 0;
+  topCarton.position.z = 0;
+  restBaseAt(topCarton, palletTop + h1 + gap + h2 + gap);
+  const stackTop = palletTop + h1 + gap + h2 + gap + heightOf(topCarton);
+
+  // Floating carton above the stack.
+  const floatGap = 0.28;
+  const floating = await makeCarton();
+  floating.position.x = 0;
+  floating.position.z = 0;
+  restBaseAt(floating, stackTop + floatGap);
+  const floatBaseY = floating.position.y;
+
+  // Containers on the ground beside the pallet, sized relative to the pallet.
+  const tinA = await ctx.models.instance('model.tin');
+  fitLargest(tinA, palletW * 0.24);
+  root.add(tinA);
+  restBaseAt(tinA, 0);
+  tinA.position.x = palletW / 2 + boundsOf(tinA).size.x / 2 + 0.07;
+  tinA.position.z = palletD * 0.14;
+
+  const tinB = await ctx.models.instance('model.tin');
+  fitLargest(tinB, palletW * 0.2);
+  root.add(tinB);
+  restBaseAt(tinB, 0);
+  tinB.position.x = tinA.position.x;
+  tinB.position.z = -palletD * 0.14 - boundsOf(tinB).size.z * 0.6;
+
+  const sack = await ctx.models.instance('model.sack');
+  fitLargest(sack, palletW * 0.26);
+  root.add(sack);
+  restBaseAt(sack, 0);
+  sack.position.x = -(palletW / 2 + boundsOf(sack).size.x / 2 + 0.07);
+  sack.position.z = 0;
+
   castShadows(root, true);
-  addContactShadow(root, ctx, { x: 0, z: 0 }, { width: 1.55, depth: 1.35 }, { opacity: 0.38 });
-  addContactShadow(root, ctx, { x: 0.94, z: 0.02 }, { width: 0.7, depth: 0.9 }, { opacity: 0.28 });
-  addContactShadow(root, ctx, { x: -0.94, z: -0.12 }, { width: 0.6, depth: 0.6 }, { opacity: 0.26 });
+  // Measured contact shadows under the ground items.
+  contactShadowFor(ground, ctx, pallet, 0.4);
+  contactShadowFor(ground, ctx, tinA, 0.3);
+  contactShadowFor(ground, ctx, tinB, 0.28);
+  contactShadowFor(ground, ctx, sack, 0.28);
 
-  const target = new THREE.Vector3(0, 0.82, 0);
-  const direction = new THREE.Vector3(0, 0.26, 1);
-  const framing = { halfW: 1.22, halfH: 1.05 };
+  // Adaptive camera: frame the measured content.
+  const frame = frameContent(root, 1.24);
+  const { target, halfW, halfH } = frame;
+  const direction = new THREE.Vector3(0, 0.24, 1);
   const base = { yaw: -0.5 };
 
-  // Floating carton spins slowly. Tins turn at a different pace, so the motion never repeats.
   const tins = [tinA, tinB];
 
-  const update = (frame: FrameState): void => {
-    frameCamera(camera, target, direction, framing.halfW, framing.halfH, frame.aspect);
+  const update = (frameState: FrameState): void => {
+    frameCamera(camera, target, direction, halfW, halfH, frameState.aspect);
 
-    if (frame.reduced) {
+    if (frameState.reduced) {
       root.rotation.y = base.yaw;
-      floating.position.y = 1.3;
+      floating.position.y = floatBaseY;
       return;
     }
 
-    // Pointer and idle motion. Scroll pulls the stack gently as the section leaves the screen.
-    const idle = bob(frame.time, 0.05, 0.22);
-    const scrollTurn = -frame.progress * 0.42;
-    const targetYaw = base.yaw + idle + frame.pointer.x * 0.32 + scrollTurn;
-    root.rotation.y = damp(root.rotation.y, targetYaw, 3, frame.dt);
-    root.rotation.x = damp(root.rotation.x, frame.pointer.y * 0.08, 3, frame.dt);
-    root.position.y = damp(root.position.y, -frame.progress * 0.08, 3, frame.dt);
+    // Pointer and idle motion, plus a gentle scroll-linked turn and sink.
+    const idle = bob(frameState.time, 0.05, 0.22);
+    const scrollTurn = -frameState.progress * 0.42;
+    const targetYaw = base.yaw + idle + frameState.pointer.x * 0.32 + scrollTurn;
+    root.rotation.y = damp(root.rotation.y, targetYaw, 3, frameState.dt);
+    root.rotation.x = damp(root.rotation.x, frameState.pointer.y * 0.08, 3, frameState.dt);
+    root.position.y = damp(root.position.y, -frameState.progress * 0.08, 3, frameState.dt);
 
-    floating.position.y = 1.3 + bob(frame.time, 0.05, 1.05);
-    floating.rotation.y += frame.dt * 0.32;
-    floating.rotation.z = bob(frame.time, 0.035, 0.7);
+    floating.position.y = floatBaseY + bob(frameState.time, 0.05, 1.05);
+    floating.rotation.y += frameState.dt * 0.32;
+    floating.rotation.z = bob(frameState.time, 0.035, 0.7);
 
     tins.forEach((tin, i) => {
-      tin.rotation.y += frame.dt * (0.18 + i * 0.07);
+      tin.rotation.y += frameState.dt * (0.18 + i * 0.07);
     });
   };
 

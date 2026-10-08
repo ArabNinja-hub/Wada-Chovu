@@ -183,7 +183,7 @@ class Stage {
     }
 
     const textures = new TextureLibrary(renderer);
-    const materials = new MaterialLibrary(textures.texture('texture.cartonLabel'));
+    const materials = new MaterialLibrary(textures);
     const models = new ModelLibrary(this.profile, materials);
     this.context = { renderer, profile: this.profile, models, textures, environment };
     return this.context;

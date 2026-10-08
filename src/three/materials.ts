@@ -1,15 +1,18 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import type { TextureLibrary } from './textures.ts';
 
 /**
- * Shared materials and geometry. Each name is created once and reused by every instance,
- * so cloning a model is cheap and draw calls stay low.
+ * Shared materials and geometry. Each name is created once and reused by every instance, so
+ * cloning a model is cheap and draw calls stay low. Colours are sampled from the supplied
+ * Wada Chovu logo.
  */
 
 const PALETTE = {
   kraft: 0xc99a5c,
   kraftLight: 0xdcb27c,
   kraftDark: 0xa87a42,
+  kraftEdge: 0x8a5f33,
   tape: 0xf3e6cc,
   neon: 0x06fc07,
   leaf: 0x1f9c15,
@@ -24,6 +27,7 @@ const PALETTE = {
   cloth: 0xefe6d2,
   clothDark: 0xdccfb3,
   plinth: 0xe8efe6,
+  matte: 0xffffff,
   white: 0xffffff,
 } as const;
 
@@ -31,7 +35,7 @@ export class MaterialLibrary {
   private materials = new Map<string, THREE.Material>();
   private geometries = new Map<string, THREE.BufferGeometry>();
 
-  constructor(private readonly labelTexture: THREE.Texture | null) {}
+  constructor(private readonly textures: TextureLibrary) {}
 
   private mat(name: string, make: () => THREE.Material): THREE.Material {
     let m = this.materials.get(name);
@@ -55,6 +59,11 @@ export class MaterialLibrary {
     return this.mat(name, () => new THREE.MeshStandardMaterial(params)) as THREE.MeshStandardMaterial;
   }
 
+  /** Clear-coated material for containers and display pieces: a premium, product-like finish. */
+  physical(name: string, params: THREE.MeshPhysicalMaterialParameters): THREE.MeshPhysicalMaterial {
+    return this.mat(name, () => new THREE.MeshPhysicalMaterial(params)) as THREE.MeshPhysicalMaterial;
+  }
+
   kraft(): THREE.MeshStandardMaterial {
     return this.standard('kraft', { color: PALETTE.kraft, roughness: 0.78, metalness: 0 });
   }
@@ -67,18 +76,38 @@ export class MaterialLibrary {
     return this.standard('kraftDark', { color: PALETTE.kraftDark, roughness: 0.85, metalness: 0 });
   }
 
+  /** Slightly darker edge tone, used for carton seams and frames. */
+  kraftEdge(): THREE.MeshStandardMaterial {
+    return this.standard('kraftEdge', { color: PALETTE.kraftEdge, roughness: 0.9, metalness: 0 });
+  }
+
   tape(): THREE.MeshStandardMaterial {
     return this.standard('tape', { color: PALETTE.tape, roughness: 0.6, metalness: 0 });
   }
 
-  /** Printed label. Uses the manifest texture when present, otherwise plain paper. */
+  /** Printed carton label. Uses the manifest's carton-label texture (the supplied logo by default). */
   label(): THREE.MeshStandardMaterial {
     return this.standard('label', {
       color: PALETTE.white,
-      map: this.labelTexture ?? null,
+      map: this.textures.texture('texture.cartonLabel'),
       roughness: 0.55,
       metalness: 0,
     });
+  }
+
+  /** Product-photo surface used by the `card` placeholder (product imagery in a 3D scene). */
+  productCard(): THREE.MeshStandardMaterial {
+    return this.standard('productCard', {
+      color: PALETTE.white,
+      map: this.textures.texture('texture.productCard'),
+      roughness: 0.38,
+      metalness: 0,
+    });
+  }
+
+  /** Plain white matte, used as the inner border of a product card. */
+  whiteMatte(): THREE.MeshStandardMaterial {
+    return this.standard('whiteMatte', { color: PALETTE.matte, roughness: 0.92, metalness: 0 });
   }
 
   /** Brand neon. Used sparingly, for small accents only. */
@@ -115,12 +144,26 @@ export class MaterialLibrary {
     return this.standard('woodDark', { color: PALETTE.woodDark, roughness: 0.9, metalness: 0 });
   }
 
-  tin(): THREE.MeshStandardMaterial {
-    return this.standard('tin', { color: PALETTE.tin, roughness: 0.32, metalness: 0.15 });
+  /** Glossy container body (tin / canister): clear-coated plastic or metal. */
+  tin(): THREE.MeshPhysicalMaterial {
+    return this.physical('tin', {
+      color: PALETTE.tin,
+      roughness: 0.22,
+      metalness: 0.08,
+      clearcoat: 0.7,
+      clearcoatRoughness: 0.18,
+    });
   }
 
-  tinShade(): THREE.MeshStandardMaterial {
-    return this.standard('tinShade', { color: PALETTE.tinShade, roughness: 0.4, metalness: 0.2 });
+  /** Container lid and rim. */
+  tinShade(): THREE.MeshPhysicalMaterial {
+    return this.physical('tinShade', {
+      color: PALETTE.tinShade,
+      roughness: 0.3,
+      metalness: 0.25,
+      clearcoat: 0.5,
+      clearcoatRoughness: 0.25,
+    });
   }
 
   cloth(): THREE.MeshStandardMaterial {
@@ -131,8 +174,17 @@ export class MaterialLibrary {
     return this.standard('clothDark', { color: PALETTE.clothDark, roughness: 0.95, metalness: 0 });
   }
 
-  plinth(): THREE.MeshStandardMaterial {
-    return this.standard('plinth', { color: PALETTE.plinth, roughness: 0.45, metalness: 0.05 });
+  /** Display base with a soft sheen. */
+  plinth(): THREE.MeshPhysicalMaterial {
+    return this.physical('plinth', {
+      color: PALETTE.plinth,
+      roughness: 0.42,
+      metalness: 0,
+      sheen: 0.6,
+      sheenColor: new THREE.Color(0xffffff),
+      clearcoat: 0.25,
+      clearcoatRoughness: 0.4,
+    });
   }
 
   /** Rounded box geometry, cached by size. */
@@ -154,6 +206,11 @@ export class MaterialLibrary {
   plane(width: number, height: number): THREE.BufferGeometry {
     const key = `plane:${width}:${height}`;
     return this.geo(key, () => new THREE.PlaneGeometry(width, height));
+  }
+
+  circle(radius: number, segments = 64): THREE.BufferGeometry {
+    const key = `circle:${radius}:${segments}`;
+    return this.geo(key, () => new THREE.CircleGeometry(radius, segments));
   }
 
   lathe(points: THREE.Vector2[], segments = 48): THREE.BufferGeometry {

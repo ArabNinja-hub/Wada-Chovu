@@ -67,10 +67,11 @@ src/
   three/                3D system (loaded on demand)
     stage.ts            One shared WebGL canvas that draws every 3D slot
     models.ts           Model loader: .glb/.gltf when configured, placeholder geometry otherwise
-    placeholders.ts     Procedural placeholder models (carton, pallet, tin, sack, rack, plinth)
+    layout.ts           Measured placement: stack, grid, ring, fit-to-shelf, frame-content
+    placeholders.ts     Placeholder models (carton, pallet, tin, sack, rack, plinth, card)
     materials.ts        Shared materials and geometry
     textures.ts         Texture loader with fallbacks
-    rig.ts              Animation and camera helpers (damping, bob, fit-to-frame)
+    rig.ts              Animation helpers (damping, bob) and camera fitting
     scenes/             Hero, warehouse band and featured scenes
   styles/               tokens.css, base.css, components.css, sections.css, motion.css
 public/
@@ -94,7 +95,16 @@ The **render layer** and the **client layer** are kept apart. The page is genera
 
 **Assets.** Every photo, texture and model is listed once in `src/content/assets.ts`. Components refer to keys only, so replacing an image or model means changing one entry. Each image slot has a fixed aspect ratio, so a swapped photo does not move the page.
 
-**3D as replaceable components.** Each 3D object is a model key (`model.carton`, `model.tin`, …). Scenes ask the model library for an instance. If a `.glb` or `.gltf` file is configured, it is loaded; otherwise a procedural placeholder is built in code. Either way the model is normalised to the same size and pivot, so scene composition and animation do not change when a model is swapped. Models are treated as static meshes. Skinned or animated models need their clones made with `SkeletonUtils`, which is not yet wired in.
+**3D is asset-agnostic.** Each 3D object is a model key (`model.carton`, `model.tin`, …). Scenes ask the model library for an instance; if a `.glb` or `.gltf` file is configured it is loaded, otherwise a procedural placeholder is built in code. The point of the system is that **scenes never hard-code the size, proportions or position of an asset**:
+
+- Every model is normalised to a contract: largest dimension = the manifest's `fit`, centred on X/Z, base on Y = 0 (`normaliseModel` in `models.ts`).
+- `src/three/layout.ts` places objects by their measured bounding boxes. Stacks rest on each other, shelf bays fit their contents, display items sit on a ring inside the plinth, and contact shadows are sized from footprints.
+- `frameContent` derives the camera framing from the measured content, so a bigger or smaller replacement model is framed automatically.
+- Lighting, shadows, scroll and pointer motion, reduced-motion handling and responsive behaviour do not change.
+
+Dropping in a real product `.glb` therefore re-composes and re-frames the scene with no scene, lighting, camera or animation code changed. This is verified by a dev check (see Quality checks).
+
+For product imagery, the `card` builder shows a product photo on a framed panel in place of a 3D object: set a model key's `builder` to `'card'` and point `texture.productCard` at the photo. The featured scene uses one, so the demo shows both a 3D object and product imagery in the same composition. Models are treated as static meshes; skinned or animated models need clones made with `SkeletonUtils`, which is not yet wired in.
 
 **One canvas, many scenes.** A single fixed WebGL canvas draws each visible 3D slot into its own viewport, so the page keeps normal scrolling and layout. Scenes load only when their slot approaches the viewport, and the render loop runs only while a slot is on screen.
 
@@ -114,7 +124,7 @@ The stage also watches real frame times. If the median frame rate drops below ab
 - scenes hold still: no pointer tilt, idle motion or scroll-linked movement,
 - the 3D is redrawn only when the page scrolls, resizes or loads, never on a timer.
 
-**Performance.** The prerendered HTML, CSS and client JavaScript total about 17 KB gzipped. The Latin font (90 KB, preloaded) is the largest first-load asset. The three.js stage (about 150 KB gzipped) loads only on devices that can run it. Each scene's code loads when its slot nears the screen. Images below the fold are lazy-loaded. The logo and the 3D fallback images load eagerly. Every image and 3D slot reserves its space before it loads, so the layout does not shift. A body-level safety net clips accidental horizontal overflow.
+**Performance.** The prerendered HTML, CSS and client JavaScript total about 17 KB gzipped. The Latin font (90 KB, preloaded) is the largest first-load asset. The three.js runtime (about 165 KB gzipped in total) loads only on devices that can run it. The core stage loads at start-up on capable devices, and each scene's code loads when its slot nears the screen. Images below the fold are lazy-loaded. The logo and the 3D fallback images load eagerly. Every image and 3D slot reserves its space before it loads, so the layout does not shift. A body-level safety net clips accidental horizontal overflow.
 
 **Enquiry form.** Validation runs in the browser, and each field has an accessible error message. A honeypot field catches most bots. Submission has two modes, chosen in `src/content/site.ts`:
 - `enquiry.endpoint` set to an HTTPS URL: the enquiry is sent there as JSON.
@@ -148,6 +158,8 @@ Run against the production build in headless Chromium, at 360, 390, 768, 1024 an
 - Mobile menu opens and closes, and anchor links land below the sticky header.
 
 Contrast was checked for the main text and background pairs. The required-field asterisk uses a deeper orange than the brand orange, because the brand orange on white does not reach the AA threshold for text.
+
+Asset-agnosticism was verified in the browser against the dev server with a temporary check module (run, then removed). It confirmed: every model key normalises to base-on-Y=0, largest-dimension = `fit`, centred on X/Z; a differently-proportioned custom model stacks and arranges with no gaps or overlaps; and a real `.glb` (exported with GLTFExporter, re-loaded with GLTFLoader) normalises correctly through the same path. All checks passed with no console errors.
 
 ---
 

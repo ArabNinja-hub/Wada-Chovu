@@ -230,7 +230,7 @@
 }
 
 .scale__slot {
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 16 / 10;
 }
 
 @media (min-width: 900px) {
@@ -239,7 +239,7 @@
   }
 
   .scale__slot {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 16 / 10;
   }
 }
 
