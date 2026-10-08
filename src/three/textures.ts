@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { getTexture, type TextureKey } from '../content/assets.ts';
+import { publicAssetUrl } from '../public-url.ts';
 
 /**
  * Texture cache. Textures are referenced by manifest key, so swapping an image only means
@@ -21,8 +22,9 @@ export class TextureLibrary {
     if (cached) return cached;
 
     const asset = getTexture(key);
-    const tex = new THREE.TextureLoader().load(asset.src, undefined, undefined, () => {
-      console.warn(`Texture "${key}" failed to load from ${asset.src}; using a plain fallback.`);
+    const src = publicAssetUrl(asset.src);
+    const tex = new THREE.TextureLoader().load(src, undefined, undefined, () => {
+      console.warn(`Texture "${key}" failed to load from ${src}; using a plain fallback.`);
       // Three.js accepts canvases as texture sources at runtime. The type only models images.
       tex.image = fallbackCanvas() as unknown as HTMLImageElement;
       tex.needsUpdate = true;

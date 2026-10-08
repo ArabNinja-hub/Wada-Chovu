@@ -24,6 +24,8 @@ function prerender(): Plugin {
 const allowedHosts = ['.e2b.app', 'localhost', '127.0.0.1'];
 
 export default defineConfig({
+  // Project site: https://<user>.github.io/Wada-Chovu/
+  base: '/Wada-Chovu/',
   plugins: [prerender()],
   server: {
     host: '0.0.0.0',

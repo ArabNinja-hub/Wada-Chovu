@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { getModel, type ModelKey } from '../content/assets.ts';
+import { publicAssetUrl } from '../public-url.ts';
 import type { QualityProfile } from '../client/quality.ts';
 import { buildProcedural } from './placeholders.ts';
 import type { MaterialLibrary } from './materials.ts';
@@ -38,12 +39,13 @@ export class ModelLibrary {
   private async load(key: ModelKey): Promise<THREE.Object3D> {
     const asset = getModel(key);
     if (asset.url) {
+      const url = publicAssetUrl(asset.url);
       try {
         const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
-        const gltf = await new GLTFLoader().loadAsync(asset.url);
+        const gltf = await new GLTFLoader().loadAsync(url);
         return this.normalise(gltf.scene, asset.fit ?? 1);
       } catch (error) {
-        console.warn(`Model "${key}" could not be loaded from ${asset.url}; using placeholder geometry.`, error);
+        console.warn(`Model "${key}" could not be loaded from ${url}; using placeholder geometry.`, error);
       }
     }
     return this.normalise(buildProcedural(asset.builder, this.materials), asset.fit ?? 1);
