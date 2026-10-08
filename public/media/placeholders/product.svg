@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="PRODUCT PHOTO">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef5ea"/><stop offset="1" stop-color="#dbe8d3"/></linearGradient></defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect x="24" y="18" width="752" height="564" fill="none" stroke="#0a2413" stroke-opacity="0.25" stroke-width="2" stroke-dasharray="20 16" rx="16"/>
+  <polygon points="382,420 236.5,336 236.5,205.8 382,289.8" fill="#c99a5c"/>
+<polygon points="382,420 563.9,315 563.9,184.8 382,289.8" fill="#a87a42"/>
+<polygon points="382,289.8 563.9,184.8 418.4,100.8 236.5,205.8" fill="#dcb27c"/>
+<polygon points="352.9,322.5 265.6,272.1 265.6,326.8 352.9,377.2" fill="#ffffff" opacity="0.92"/>
+<circle cx="309.3" cy="324.6" r="8.7" fill="#fe6700" opacity="0.85"/>
+  <text x="400" y="480" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="38" letter-spacing="3" fill="#0a2413">PRODUCT PHOTO</text>
+  <text x="400" y="537" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#0a2413" fill-opacity="0.7">Placeholder. Replace with a 4:3 product photo.</text>
+</svg>

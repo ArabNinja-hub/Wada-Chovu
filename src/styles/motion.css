@@ -1,0 +1,41 @@
+/*
+ * Motion
+ * Reveal animations only apply once JavaScript confirms that motion is allowed
+ * (the `motion-ready` class is set by the client). Without JavaScript, or when reduced
+ * motion is requested, all content is visible from the start.
+ */
+
+.motion-ready [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition:
+    opacity 0.9s var(--ease) var(--d, 0ms),
+    transform 1s var(--ease) var(--d, 0ms);
+}
+
+.motion-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Header shadow and the sticky header state are handled in components.css. */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .motion-ready [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
