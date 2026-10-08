@@ -14,11 +14,13 @@ Requirements: **Node.js 20.19 or newer** (22 LTS recommended) and npm.
 
 ```bash
 npm install
-npm run dev            # development server on http://localhost:5173 (bound to 0.0.0.0)
+npm run dev            # development server on http://localhost:5173/Wada-Chovu/ (bound to 0.0.0.0)
 npm run build          # type-check, then production build into dist/
-npm run preview        # serve dist/ on http://localhost:4173
+npm run preview        # serve dist/ on http://localhost:4173/Wada-Chovu/
 npm run placeholders   # regenerate the placeholder artwork in public/media/placeholders
 ```
+
+The Vite `base` is `/Wada-Chovu/`, so local dev, preview, and the GitHub Pages project site are served from that path.
 
 Development only: append `?quality=high`, `?quality=medium` or `?quality=low` to the URL to force a 3D quality tier and turn off automatic adjustment. The flag is ignored in production builds.
 
