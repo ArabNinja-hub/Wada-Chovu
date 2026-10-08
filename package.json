@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/verify-dist.mjs",
     "preview": "vite preview",
     "placeholders": "node scripts/generate-placeholders.mjs"
   },
