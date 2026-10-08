@@ -114,7 +114,7 @@ The stage also watches real frame times. If the median frame rate drops below ab
 - scenes hold still: no pointer tilt, idle motion or scroll-linked movement,
 - the 3D is redrawn only when the page scrolls, resizes or loads, never on a timer.
 
-**Performance.** The prerendered HTML, CSS and client JavaScript total about 17 KB gzipped. The Latin font (90 KB, preloaded) is the largest first-load asset. The three.js stage (about 150 KB gzipped) loads only on devices that can run it, and only when a 3D slot nears the screen. Images below the fold are lazy-loaded. The logo and the 3D fallback images load eagerly. Every image and 3D slot reserves its space before it loads, so the layout does not shift. A body-level safety net clips accidental horizontal overflow.
+**Performance.** The prerendered HTML, CSS and client JavaScript total about 17 KB gzipped. The Latin font (90 KB, preloaded) is the largest first-load asset. The three.js stage (about 150 KB gzipped) loads only on devices that can run it. Each scene's code loads when its slot nears the screen. Images below the fold are lazy-loaded. The logo and the 3D fallback images load eagerly. Every image and 3D slot reserves its space before it loads, so the layout does not shift. A body-level safety net clips accidental horizontal overflow.
 
 **Enquiry form.** Validation runs in the browser, and each field has an accessible error message. A honeypot field catches most bots. Submission has two modes, chosen in `src/content/site.ts`:
 - `enquiry.endpoint` set to an HTTPS URL: the enquiry is sent there as JSON.
