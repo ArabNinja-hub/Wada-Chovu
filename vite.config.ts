@@ -9,7 +9,7 @@ import { renderHeadMeta, renderPage } from './src/render/page.ts';
  */
 function prerender(): Plugin {
   return {
-    name: 'wada-chovu:prerender',
+    name: 'chovu-chovu-brothers:prerender',
     transformIndexHtml: {
       order: 'pre',
       handler(html) {
@@ -24,7 +24,7 @@ function prerender(): Plugin {
 const allowedHosts = ['.e2b.app', 'localhost', '127.0.0.1'];
 
 export default defineConfig({
-  // Project site: https://<user>.github.io/Wada-Chovu/
+  // Project site: https://<user>.github.io/Wada-Chovu/ (the repository name sets this path)
   base: '/Wada-Chovu/',
   plugins: [prerender()],
   server: {

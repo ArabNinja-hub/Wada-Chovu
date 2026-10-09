@@ -1,8 +1,8 @@
-# Wada Chovu Wholesale
+# Chovu Chovu Brothers Ltd
 
-The website for **Wada Chovu Wholesale**. It is a static, prerendered site: the complete page is in the HTML before any JavaScript runs. Optional Three.js scenes add motion on capable devices, and the page is fully usable without them.
+The website for **Chovu Chovu Brothers Ltd**, a retail shop in Luanshya, Copperbelt Province, Zambia. It is a static, prerendered site: the complete page is in the HTML before any JavaScript runs. Optional Three.js scenes add motion on capable devices, and the page is fully usable without them.
 
-Brand reference: the supplied logo, `public/brand/wada-chovu-logo.jpeg`. The palette in `src/styles/tokens.css` is sampled from it.
+Brand reference: the supplied logo, `public/brand/wada-chovu-logo.jpeg`, used unaltered. The palette in `src/styles/tokens.css` is drawn from it. **Note:** the artwork itself reads "WADA CHOVU SERVICES LTD"; see *Open questions* below.
 
 > **Status:** structure, design system, 3D system and enquiry form are complete. Photos, 3D models, business contact details and product information are still placeholders. See [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md) for how to replace them.
 
@@ -17,7 +17,7 @@ npm install
 npm run dev            # development server on http://localhost:5173/Wada-Chovu/ (bound to 0.0.0.0)
 npm run build          # type-check, then production build into dist/
 npm run preview        # serve dist/ on http://localhost:4173/Wada-Chovu/
-npm run placeholders   # regenerate the placeholder artwork in public/media/placeholders
+python3 scripts/depth/process-photos.py --sources <folder>   # turn original photos into depth-ready assets (see docs/PHOTO_PIPELINE.md)
 ```
 
 The Vite `base` is `/Wada-Chovu/`, so local dev, preview, and the GitHub Pages project site are served from that path.
@@ -30,15 +30,16 @@ Development only: append `?quality=high`, `?quality=medium` or `?quality=low` to
 
 | Section | Purpose |
 | --- | --- |
-| Header | Logo, section links and a "Wholesale enquiry" call to action. A full-height menu sheet on small screens. |
-| Hero | Headline, calls to action, and a 3D stack of cartons and containers in an arch that echoes the logo. |
-| About | Who the business is for, with a portrait image in an arch frame. |
-| Product categories | Four category cards (placeholder content). Each card pre-selects its product in the enquiry form. |
+| Header | Logo, section links and a "Send an enquiry" call to action. A full-height menu sheet on small screens. |
+| Hero | Welcome headline, calls to action, and a 3D product display on a shop counter in an arch that echoes the logo. |
+| About | The shop and what to expect, with a portrait image of the shop or team in an arch frame. |
+| Shop by category | Four category cards (placeholder content). Each card pre-selects its product in the enquiry form. |
+| Product assembly | Pinned, scroll-driven 3D section. Four photographs appear, move into a row, converge into a composed arrangement, then leave as the page scrolls on. Uses GSAP ScrollTrigger and a shared Three.js stage. Static grid when 3D is unavailable or reduced motion is on. |
 | Featured products | A small 3D display group, then four product cards (placeholder content). Each pre-selects its product too. |
-| Warehouse band | Dark section with a 3D rack and pallets. The camera moves with scrolling. |
+| In the shop | Dark section with 3D retail shelving and product displays. The camera moves with scrolling. |
 | Why choose us | Four value pillars. |
-| Enquiry | Wholesale enquiry form with validation, a honeypot field, and submission by email app or JSON endpoint. |
-| Location and contact | Address, phone, email and hours (placeholders) and a location image. |
+| Enquiry | Enquiry form with validation, a honeypot field, and submission by email app or JSON endpoint. |
+| Visit us | Luanshya location (confirmed), street address, phone, email and hours (placeholders) and a shop exterior image. |
 | Footer | Logo, navigation, contact summary, legal line and back to top. |
 
 ---
@@ -58,7 +59,7 @@ src/
   render/               Pure HTML generators (run at build time; no DOM access)
     page.ts             Page assembly and document head (title, meta, structured data)
     media.ts            renderImage / renderStageSlot: the only way images reach the page
-    ui.ts, icons.ts     Buttons, headings, eyebrows, inline line icons
+    ui.ts, icons.ts     Buttons, headings, eyebrows, CSS-drawn icons
     sections/           One file per section
   client/               Progressive enhancement (runs after the page is visible)
     main.ts             Entry point. Loads the 3D stage only when it is needed.
@@ -69,20 +70,22 @@ src/
   three/                3D system (loaded on demand)
     stage.ts            One shared WebGL canvas that draws every 3D slot
     models.ts           Model loader: .glb/.gltf when configured, placeholder geometry otherwise
+    photo-depth.ts      Depth-displaced photograph: the reusable 3D photo renderer
     layout.ts           Measured placement: stack, grid, ring, fit-to-shelf, frame-content
-    placeholders.ts     Placeholder models (carton, pallet, tin, sack, rack, plinth, card)
+    placeholders.ts     Fallback geometry (carton, tin, pouch, plinth, card)
     materials.ts        Shared materials and geometry
     textures.ts         Texture loader with fallbacks
     rig.ts              Animation helpers (damping, bob) and camera fitting
-    scenes/             Hero, warehouse band and featured scenes
+    scenes/             Photo scene (hero and shop floor), featured GLB product scene
   styles/               tokens.css, base.css, components.css, sections.css, motion.css
 public/
-  brand/                The supplied logo and the favicon
-  media/placeholders/   Placeholder artwork (generated by scripts/generate-placeholders.mjs)
-  models/               Put .glb / .gltf files here (empty until you add one)
+  brand/                The supplied logo and a favicon cropped from it
+  media/photos/         Stand-in photographs and their depth maps (generated by scripts/depth)
+  models/               Generic placeholder packaging (GLB) and CREDITS.md
   robots.txt
-scripts/generate-placeholders.mjs
+scripts/depth/          Depth pipeline: fetch the model, turn photos into depth-ready assets
 docs/CONTENT_GUIDE.md   How to replace placeholders with real content
+docs/PHOTO_PIPELINE.md  How photos become 3D scenes, licences and limits
 ```
 
 The **render layer** and the **client layer** are kept apart. The page is generated as plain HTML, so the content is readable, indexable and fast before any JavaScript runs. The client code only adds behaviour.
@@ -97,16 +100,18 @@ The **render layer** and the **client layer** are kept apart. The page is genera
 
 **Assets.** Every photo, texture and model is listed once in `src/content/assets.ts`. Components refer to keys only, so replacing an image or model means changing one entry. Each image slot has a fixed aspect ratio, so a swapped photo does not move the page.
 
-**3D is asset-agnostic.** Each 3D object is a model key (`model.carton`, `model.tin`, …). Scenes ask the model library for an instance; if a `.glb` or `.gltf` file is configured it is loaded, otherwise a procedural placeholder is built in code. The point of the system is that **scenes never hard-code the size, proportions or position of an asset**:
+**3D photographs are depth-displaced.** A real photograph is mapped onto a subdivided plane, and its depth map (estimated by FastDepth, MIT) moves the vertices, so the displacement changes the rendered geometry. See `docs/PHOTO_PIPELINE.md`.
+
+**3D objects are asset-agnostic.** Each 3D object is a model key (`model.box`, `model.plinth`, …). Scenes ask the model library for an instance; if a `.glb` or `.gltf` file is configured it is loaded, otherwise fallback geometry is built in code. The point of the system is that **scenes never hard-code the size, proportions or position of an asset**:
 
 - Every model is normalised to a contract: largest dimension = the manifest's `fit`, centred on X/Z, base on Y = 0 (`normaliseModel` in `models.ts`).
 - `src/three/layout.ts` places objects by their measured bounding boxes. Stacks rest on each other, shelf bays fit their contents, display items sit on a ring inside the plinth, and contact shadows are sized from footprints.
 - `frameContent` derives the camera framing from the measured content, so a bigger or smaller replacement model is framed automatically.
 - Lighting, shadows, scroll and pointer motion, reduced-motion handling and responsive behaviour do not change.
 
-Dropping in a real product `.glb` therefore re-composes and re-frames the scene with no scene, lighting, camera or animation code changed. This is verified by a dev check (see Quality checks).
+Dropping in a real product `.glb` therefore re-composes and re-frames the scene with no scene, lighting, camera or animation code changed.
 
-For product imagery, the `card` builder shows a product photo on a framed panel in place of a 3D object: set a model key's `builder` to `'card'` and point `texture.productCard` at the photo. The featured scene uses one, so the demo shows both a 3D object and product imagery in the same composition. Models are treated as static meshes; skinned or animated models need clones made with `SkeletonUtils`, which is not yet wired in.
+For flat product imagery, the `card` builder shows a photograph on a panel. It is a flat photograph, not a 3D object. Models are treated as static meshes; skinned or animated models need clones made with `SkeletonUtils`, which is not yet wired in.
 
 **One canvas, many scenes.** A single fixed WebGL canvas draws each visible 3D slot into its own viewport, so the page keeps normal scrolling and layout. Scenes load only when their slot approaches the viewport, and the render loop runs only while a slot is on screen.
 
@@ -130,7 +135,8 @@ The stage also watches real frame times. If the median frame rate drops below ab
 
 **Enquiry form.** Validation runs in the browser, and each field has an accessible error message. A honeypot field catches most bots. Submission has two modes, chosen in `src/content/site.ts`:
 - `enquiry.endpoint` set to an HTTPS URL: the enquiry is sent there as JSON.
-- `enquiry.endpoint` empty (the default): the visitor's email app opens with the enquiry filled in, addressed to `enquiry.emailTo`. No server is needed.
+- `enquiry.endpoint` empty and `enquiry.emailTo` set to a real address: the visitor's email app opens with the enquiry filled in. No server is needed.
+- Neither set (the default now): the form is disabled and shows a notice. Nothing is sent. Placeholder domains such as `example.com` are rejected, both for the email address and for the endpoint host, and the deploy guard fails the build if any built `mailto:` link points at one.
 
 **Accessibility.** Semantic landmarks, a single `h1`, a skip link, visible focus styles, labelled form fields, and status messages in live regions. The 3D canvas is hidden from assistive technology, and each 3D slot is labelled with a short description. Without JavaScript, the navigation links are shown in the page, and the enquiry form uses the browser's own validation and opens the visitor's email app (a `mailto:` submission). That path has been checked for markup, not in a particular mail client.
 
@@ -140,7 +146,7 @@ The stage also watches real frame times. If the median frame rate drops below ab
 
 Anything the business has not confirmed is a clearly marked placeholder. A "Placeholder" badge appears on images, and an orange highlight marks text. Both are controlled by `features.placeholderMarkers` in `src/content/site.ts`. Set it to `false` once the content is final.
 
-Placeholders include: the company address, phone, email and hours; product category and product names, pack sizes and descriptions; all photography; and the favicon, a simplified mark drawn from the logo. Nothing on the page states a year of trading, customer numbers, certifications, prices, delivery times or capacity. Add those only once they are confirmed.
+Placeholders include: the street address, phone, email and hours; product category and product names, pack sizes and descriptions; all photography; and the favicon, a simplified mark drawn from the logo. Nothing on the page states a year of trading, customer numbers, certifications, prices, delivery times or capacity. Add those only once they are confirmed.
 
 ---
 
@@ -152,7 +158,7 @@ Run against the production build in headless Chromium, at 360, 390, 768, 1024 an
 - No horizontal overflow at any width.
 - Cumulative layout shift of 0 on load at every width.
 - No console errors, page errors or failed requests on load.
-- The hero 3D scene starts on load. The featured and warehouse scenes start when they are scrolled into view.
+- The hero 3D scene starts on load. The featured and shop-floor scenes start when they are scrolled into view.
 - Reduced motion: no animation frames are requested while the page is idle, and reveal animations are not used.
 - No JavaScript: all content and the navigation are present, and the enquiry form submits to the visitor's email app.
 - 3D blocked at the network level: the page stays complete with the fallback art, and one warning is logged.
@@ -165,15 +171,19 @@ Asset-agnosticism was verified in the browser against the dev server with a temp
 
 ---
 
+## Deployment
+
+GitHub Pages is set to build from the workflow (`.github/workflows/static.yml`). The workflow runs only on pushes to `main`, so this branch is **not deployed** until it is merged. The workflow runs `npm run build`, then `scripts/verify-dist.mjs`, and uploads `dist/`. The site is served at `https://arabninja-hub.github.io/Wada-Chovu/`, so every asset URL carries the `/Wada-Chovu/` base. The guard checks `href`, `src` and `srcset`, and the runtime URLs for photos, depth maps and models use `publicAssetUrl`.
+
 ## Before launch
 
 Items that need an owner's decision or real information:
 
-1. **Legal name.** The logo reads "Wada Chovu Services Ltd" and the brief says "Wholesale". The footer uses the logo name. Confirm which name the legal line should show.
+1. **Logo artwork.** The supplied logo file (`public/brand/wada-chovu-logo.jpeg`) reads "WADA CHOVU SERVICES LTD". The site name, alt text and structured data use "Chovu Chovu Brothers Ltd", but the logo image still shows the old name in the header, footer and social preview. Supply the Chovu Chovu Brothers Ltd logo and replace the file (the path can stay the same).
 2. **Contact details, address and opening hours** (`src/content/site.ts`).
 3. **Production URL** (`site.url`), used for canonical links, social previews and structured data.
 4. **Enquiry handling.** Choose an endpoint, or confirm the email address that receives enquiries.
 5. **Privacy notice.** The enquiry form collects personal data. Add a privacy notice and link it from the form before launch.
-6. **Copy.** Confirm or rewrite the operational wording in `src/content/copy.ts`, for example the statements about bulk, repeat supply and clear enquiries.
+6. **Copy.** Confirm or rewrite the wording in `src/content/copy.ts`. Product availability, shop-floor help, reply times and the privacy statement "We only use your details to respond to your enquiry" need the owner's confirmation.
 7. **Photography and models.** See the content guide.
 8. **Favicon.** Replace the placeholder mark with the official icon when it is available.

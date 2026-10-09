@@ -5,10 +5,10 @@ import { bob, damp, frameCamera } from '../rig.ts';
 import { boundsOf, fitLargest, frameContent, restBaseAt, ring } from '../layout.ts';
 
 /**
- * Featured scene: a small display group on a round plinth. It mixes 3D containers with a
- * product-photo card, showing that a placeholder object and product imagery can occupy the
- * same composition. Items are placed on a measured ring inside the plinth, so any model sizes
- * fit. The camera frames the measured content.
+ * Featured scene: generic placeholder packaging (a GLB box) on a round plinth. The models are
+ * for layout only and imply no product category. Items are placed on a measured ring inside the
+ * plinth, so any model size fits. The camera frames the measured content. Models come from the
+ * asset manifest, so real product models can replace them without code changes.
  */
 export const createFeaturedScene: SceneFactory = async (ctx) => {
   const scene = new THREE.Scene();
@@ -40,12 +40,12 @@ export const createFeaturedScene: SceneFactory = async (ctx) => {
 
   // A display group: containers plus a product-photo card. Each item is sized relative to the
   // plinth and placed on a ring inside it, resting on the plinth top.
-  const itemKeys = ['model.card', 'model.tin', 'model.sack', 'model.tin', 'model.sack'] as const;
+  const itemKeys = ['model.box', 'model.box', 'model.box'] as const;
   const positions = ring(itemKeys.length, plinthR * 0.6, Math.PI / 2);
   const items: Array<{ object: THREE.Object3D; phase: number }> = [];
   for (let i = 0; i < itemKeys.length; i++) {
     const object = await ctx.models.instance(itemKeys[i]);
-    fitLargest(object, plinthR * 0.65);
+    fitLargest(object, plinthR * 0.55);
     object.position.x = positions[i].x;
     object.position.z = positions[i].z;
     object.rotation.y = (i / itemKeys.length) * Math.PI * 2 + 0.4;

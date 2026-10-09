@@ -4,6 +4,7 @@ import { lowerTier, type QualityProfile } from '../client/quality.ts';
 import type { StageSceneId } from '../content/types.ts';
 import { MaterialLibrary } from './materials.ts';
 import { ModelLibrary } from './models.ts';
+import { STAGE_UNAVAILABLE } from './stage-events.ts';
 import { SCENE_LOADERS } from './scenes/index.ts';
 import { TextureLibrary } from './textures.ts';
 import { clamp, damp } from './rig.ts';
@@ -25,6 +26,12 @@ import type { FrameState, SceneContext, SceneHandle } from './types.ts';
 interface Slot {
   id: StageSceneId;
   el: HTMLElement;
+  /**
+   * The section that holds the slot, when it is pinned. Loading is decided by this element,
+   * because a pinned slot can sit outside the viewport while its section is in view.
+   */
+  anchor: HTMLElement;
+  anchorNear: boolean;
   near: boolean;
   state: 'idle' | 'loading' | 'ready' | 'failed';
   handle: SceneHandle | null;
@@ -72,7 +79,10 @@ class Stage {
     this.canvas.addEventListener('webglcontextlost', this.onContextLost, false);
 
     this.resize();
-    for (const slot of this.slots) this.observer.observe(slot.el);
+    for (const slot of this.slots) {
+      this.observer.observe(slot.el);
+      if (slot.anchor !== slot.el) this.observer.observe(slot.anchor);
+    }
 
     window.addEventListener('resize', this.onResize, { passive: true });
     window.addEventListener('scroll', this.onScroll, { passive: true });
@@ -86,10 +96,13 @@ class Stage {
 
   private onIntersect = (entries: IntersectionObserverEntry[]): void => {
     for (const entry of entries) {
-      const slot = this.slots.find((s) => s.el === entry.target);
-      if (!slot) continue;
-      slot.near = entry.isIntersecting;
-      if (slot.near && slot.state === 'idle') void this.load(slot);
+      for (const slot of this.slots) {
+        if (entry.target === slot.anchor) slot.anchorNear = entry.isIntersecting;
+        if (entry.target === slot.el) slot.near = entry.isIntersecting;
+        // Loading follows the section, not the slot. If a jump skips past the slot while the
+        // section is in view, the scene still starts and its pin is created at the right place.
+        if (slot.anchorNear && slot.state === 'idle') void this.load(slot);
+      }
     }
     this.requestFrame();
   };
@@ -104,6 +117,8 @@ class Stage {
     if (!this.fineQuery.matches || this.reducedQuery.matches) return;
     this.pointerTarget.x = clamp((event.clientX / window.innerWidth) * 2 - 1, -1, 1);
     this.pointerTarget.y = clamp((event.clientY / window.innerHeight) * 2 - 1, -1, 1);
+    // Scenes that are not animating are drawn on demand, so pointer movement must request a frame.
+    if (this.slots.some((slot) => slot.near && slot.state === 'ready')) this.requestFrame();
   };
 
   /** Pointer left the window (no related target): ease the scene back to rest. */
@@ -111,6 +126,7 @@ class Stage {
     if (event.relatedTarget) return;
     this.pointerTarget.x = 0;
     this.pointerTarget.y = 0;
+    this.requestFrame();
   };
 
   private onVisibility = (): void => {
@@ -138,8 +154,11 @@ class Stage {
     try {
       const factory = await SCENE_LOADERS[slot.id]();
       const context = this.ensureContext();
-      const handle = await factory(context);
-      if (!this.active) return;
+      const handle = await factory(context, { el: slot.el, requestFrame: () => this.requestFrame() });
+      if (!this.active) {
+        handle.dispose?.();
+        return;
+      }
       try {
         this.renderer?.compile(handle.scene, handle.camera);
       } catch {
@@ -150,6 +169,7 @@ class Stage {
     } catch (error) {
       slot.state = 'failed';
       console.warn(`3D scene "${slot.id}" could not start; showing its static image.`, error);
+      slot.el.dispatchEvent(new CustomEvent(STAGE_UNAVAILABLE, { bubbles: true }));
       if (!this.renderer) this.disable();
     }
     this.requestFrame();
@@ -213,7 +233,7 @@ class Stage {
   }
 
   private hasLiveSlot(): boolean {
-    return this.slots.some((slot) => slot.near && slot.state === 'ready');
+    return this.slots.some((slot) => slot.near && slot.state === 'ready' && (slot.handle?.needsFrame?.() ?? true));
   }
 
   private requestFrame(): void {
@@ -363,8 +383,10 @@ class Stage {
     this.reducedQuery.removeEventListener('change', this.onMotionChange);
     this.canvas.remove();
     for (const slot of this.slots) {
-      slot.el.classList.remove('is-3d');
+      slot.handle?.dispose?.();
       slot.handle = null;
+      slot.el.classList.remove('is-3d');
+      slot.el.dispatchEvent(new CustomEvent(STAGE_UNAVAILABLE, { bubbles: true }));
     }
     if (this.renderer) {
       this.renderer.dispose();
@@ -381,7 +403,8 @@ export function mountStage(elements: HTMLElement[], profile: QualityProfile): vo
   for (const el of elements) {
     const id = el.dataset.stage as StageSceneId | undefined;
     if (id && id in SCENE_LOADERS) {
-      slots.push({ id, el, near: false, state: 'idle', handle: null, revealed: false });
+      const anchor = el.closest<HTMLElement>('[data-stage-section]') ?? el;
+      slots.push({ id, el, anchor, anchorNear: false, near: false, state: 'idle', handle: null, revealed: false });
     }
   }
   if (slots.length === 0) return;

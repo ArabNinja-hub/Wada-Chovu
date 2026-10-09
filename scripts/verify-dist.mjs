@@ -17,7 +17,7 @@
  *   1. dist/index.html exists and the prerender markers are replaced.
  *   2. The prerendered page structure is present (header, hero, main, footer).
  *   3. The stylesheet link resolves to a built asset inside dist/ (never a dev
- *      `/src/` path), the file is non-empty, and it carries the Wada Chovu design
+ *      `/src/` path), the file is non-empty, and it carries the site design
  *      (brand tokens, hero styles, responsive rules).
  *   4. Every local asset URL in the page (JS entry, stylesheet, font, images,
  *      favicon) resolves to a file inside dist/.
@@ -25,7 +25,7 @@
  *      live site instead of 404ing at the domain root.
  *   6. The deploy workflow uploads `dist` — never the repository root.
  */
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -121,7 +121,7 @@ for (const href of stylesheetHrefs) {
   const missing = ['--c-neon', '.hero', '@media'].filter((needle) => !css.includes(needle));
   if (css.length === 0 || missing.length > 0) {
     failures.push(
-      `stylesheet "${href}" does not carry the Wada Chovu design (missing ${missing.join(', ') || 'all content'})`,
+      `stylesheet "${href}" does not carry the site design (missing ${missing.join(', ') || 'all content'})`,
     );
     continue;
   }
@@ -180,17 +180,107 @@ check(
 
 // Summary -------------------------------------------------------------------------
 
+// The site uses real photographs and GLB models only. Fail if any SVG file or SVG markup is
+// shipped, so vector artwork cannot creep back in.
+function walk(dir) {
+  const out = [];
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name);
+    if (statSync(full).isDirectory()) out.push(...walk(full));
+    else out.push(full);
+  }
+  return out;
+}
+const shipped = walk(distDir);
+const svgFiles = shipped.filter((file) => /\.svg$/i.test(file));
+check(
+  svgFiles.length === 0,
+  'no SVG files are shipped',
+  `SVG files must not be shipped: ${svgFiles.map(rel).join(', ')}`,
+);
+const markupFiles = shipped.filter((file) => /\.(html|css)$/i.test(file));
+const svgMarkup = markupFiles.filter((file) => /<svg\b|image\/svg\+xml/i.test(readFileSync(file, 'utf8')));
+check(
+  svgMarkup.length === 0,
+  'no SVG markup in HTML or CSS',
+  `SVG markup found in: ${svgMarkup.map(rel).join(', ')}`,
+);
+
+// 7. Enquiries, stand-in photographs and the business name -----------------------
+
+/** Every shipped HTML and JS file, read once for the text checks below. */
+const shippedText = shipped
+  .filter((file) => /\.(html|js)$/i.test(file))
+  .map((file) => readFileSync(file, 'utf8'))
+  .join('\n');
+
+// srcset values also need the Pages base (the URL checks above only cover href and src).
+const srcsetUrls = [...html.matchAll(/\bsrcset="([^"]*)"/gi)].flatMap((match) =>
+  match[1].split(',').map((entry) => entry.trim().split(/\s+/)[0]).filter(Boolean),
+);
+const badSrcset = srcsetUrls.filter((url) => url.startsWith('/') && !url.startsWith(PAGES_BASE));
+check(
+  badSrcset.length === 0,
+  `all ${srcsetUrls.length} srcset URLs carry the Pages base`,
+  `srcset URLs are missing the Pages base: ${badSrcset.join(', ')}`,
+);
+
+// Enquiries never go to a reserved example domain.
+const reservedMail = /mailto:[^"'\s<>]*@[^"'\s<>]*(?:example\.(?:com|net|org)|\.test|\.invalid|\.localhost)\b/i;
+check(
+  !reservedMail.test(shippedText),
+  'no mailto: link points at a reserved example domain',
+  'a mailto: link in the build points at a reserved example domain (example.com and similar); enquiries would go there',
+);
+
+// Without a real enquiry channel the form is disabled. This is a warning, not a failure,
+// so the site can deploy while the contact details are still being confirmed.
+if (html.includes('data-channel="unconfigured"')) {
+  console.warn(
+    '::warning::Enquiry form is NOT connected (no valid https endpoint and no real enquiry email in src/content/site.ts). The form is disabled and sends nothing.',
+  );
+} else {
+  console.log('  ok  enquiry form is connected (endpoint or real enquiry email)');
+}
+
+// Every stand-in photograph is marked as a placeholder and names its source and licence.
+const assetsSource = readFileSync(join(repoRoot, 'src/content/assets.ts'), 'utf8');
+const assetBlocks = [...assetsSource.matchAll(/^  '([\w.]+)': \{([\s\S]*?)^  \},/gm)];
+const photoBlocks = assetBlocks.filter(([, , body]) => /src: '\/media\/photos\//.test(body));
+const unmarked = photoBlocks.filter(([, key, body]) => !/placeholder: true/.test(body)).map(([, key]) => key);
+const unsourced = photoBlocks
+  .filter(([, , body]) => !(/source: /.test(body) && /license: /.test(body)))
+  .map(([, key]) => key);
+check(
+  photoBlocks.length > 0 && unmarked.length === 0,
+  `all ${photoBlocks.length} photo entries are marked placeholder: true (stand-ins)`,
+  `photo entries not marked placeholder: true: ${unmarked.join(', ') || 'none found'}`,
+);
+check(
+  photoBlocks.length > 0 && unsourced.length === 0,
+  'every photo entry names its source and licence',
+  `photo entries without source and licence: ${unsourced.join(', ')}`,
+);
+
+// The business is called Chovu Chovu Brothers Ltd. The old name must not appear as visible text.
+const oldName = /wada\s+chovu/i;
+check(
+  !oldName.test(html.replace(/<[^>]*>/g, ' ')),
+  'the old business name does not appear in visible text',
+  'the old business name "Wada Chovu" appears in the visible page text',
+);
+
 if (failures.length > 0) {
   console.error('');
   for (const message of failures) console.error(`::error::${message}`);
   console.error('');
-  console.error(`Deployment blocked: ${rel(htmlPath)} is not the complete, styled Wada Chovu page.`);
+  console.error(`Deployment blocked: ${rel(htmlPath)} is not the complete, styled homepage.`);
   process.exit(1);
 }
 
 console.log('');
 console.log('Deployment check passed:');
-console.log(`  - ${rel(htmlPath)} is the prerendered Wada Chovu homepage`);
+console.log(`  - ${rel(htmlPath)} is the prerendered homepage`);
 console.log(`  - its stylesheet is connected and carries the design (${cssFiles.map(rel).join(', ')})`);
 console.log('  - every asset URL resolves inside dist/ and carries the Pages base');
 console.log('  - the deploy workflow uploads dist/, so this exact page is what GitHub Pages serves');

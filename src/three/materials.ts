@@ -4,28 +4,37 @@ import type { TextureLibrary } from './textures.ts';
 
 /**
  * Shared materials and geometry. Each name is created once and reused by every instance, so
- * cloning a model is cheap and draw calls stay low. Colours are sampled from the supplied
- * Wada Chovu logo.
+ * cloning a model is cheap and draw calls stay low.
+ *
+ * The palette is retail: warm white product packaging, a deep brand-green lacquered counter,
+ * white gondola shelving with green trim, and glossy containers. Greens and the orange sun
+ * are taken from the supplied logo and used as accents only.
  */
 
 const PALETTE = {
-  kraft: 0xc99a5c,
-  kraftLight: 0xdcb27c,
-  kraftDark: 0xa87a42,
-  kraftEdge: 0x8a5f33,
-  tape: 0xf3e6cc,
+  // Product packaging (boxes and pouches)
+  box: 0xf6f2ea,
+  boxLight: 0xfffdf8,
+  boxShade: 0xddd5c4,
+  boxEdge: 0xc8bea9,
+  pouch: 0xf1e9d8,
+  pouchDark: 0xd9cdb2,
+
+  // Brand accents
   neon: 0x06fc07,
   leaf: 0x1f9c15,
   sun: 0xfe6700,
-  forest: 0x0a2413,
-  steel: 0x5b6b65,
-  steelLight: 0x9aa9a2,
-  wood: 0xd7b98a,
-  woodDark: 0xa98151,
+  forest: 0x0f3319,
+  forestDeep: 0x0a2413,
+
+  // Fixtures
+  lacquer: 0x0f3319,
+  stone: 0xefebe2,
+  chrome: 0xb9c3bd,
+
+  // Containers
   tin: 0xf7f9f4,
   tinShade: 0xcdd6ca,
-  cloth: 0xefe6d2,
-  clothDark: 0xdccfb3,
   plinth: 0xe8efe6,
   matte: 0xffffff,
   white: 0xffffff,
@@ -64,28 +73,38 @@ export class MaterialLibrary {
     return this.mat(name, () => new THREE.MeshPhysicalMaterial(params)) as THREE.MeshPhysicalMaterial;
   }
 
-  kraft(): THREE.MeshStandardMaterial {
-    return this.standard('kraft', { color: PALETTE.kraft, roughness: 0.78, metalness: 0 });
+  // Product packaging ------------------------------------------------------
+
+  /** Main box body: warm white card. */
+  boxBody(): THREE.MeshStandardMaterial {
+    return this.standard('boxBody', { color: PALETTE.box, roughness: 0.7, metalness: 0 });
   }
 
-  kraftLight(): THREE.MeshStandardMaterial {
-    return this.standard('kraftLight', { color: PALETTE.kraftLight, roughness: 0.8, metalness: 0 });
+  /** Box lid and top panel: a touch lighter. */
+  boxLight(): THREE.MeshStandardMaterial {
+    return this.standard('boxLight', { color: PALETTE.boxLight, roughness: 0.66, metalness: 0 });
   }
 
-  kraftDark(): THREE.MeshStandardMaterial {
-    return this.standard('kraftDark', { color: PALETTE.kraftDark, roughness: 0.85, metalness: 0 });
+  /** Box shade: shadowed side panels and frames. */
+  boxShade(): THREE.MeshStandardMaterial {
+    return this.standard('boxShade', { color: PALETTE.boxShade, roughness: 0.75, metalness: 0 });
   }
 
-  /** Slightly darker edge tone, used for carton seams and frames. */
-  kraftEdge(): THREE.MeshStandardMaterial {
-    return this.standard('kraftEdge', { color: PALETTE.kraftEdge, roughness: 0.9, metalness: 0 });
+  /** Edges, seams and tuck flaps. */
+  boxEdge(): THREE.MeshStandardMaterial {
+    return this.standard('boxEdge', { color: PALETTE.boxEdge, roughness: 0.8, metalness: 0 });
   }
 
-  tape(): THREE.MeshStandardMaterial {
-    return this.standard('tape', { color: PALETTE.tape, roughness: 0.6, metalness: 0 });
+  /** Soft paper pouch. */
+  pouch(): THREE.MeshStandardMaterial {
+    return this.standard('pouch', { color: PALETTE.pouch, roughness: 0.82, metalness: 0 });
   }
 
-  /** Printed carton label. Uses the manifest's carton-label texture (the supplied logo by default). */
+  pouchDark(): THREE.MeshStandardMaterial {
+    return this.standard('pouchDark', { color: PALETTE.pouchDark, roughness: 0.9, metalness: 0 });
+  }
+
+  /** Printed product label. Uses the manifest's label texture (neutral artwork by default). */
   label(): THREE.MeshStandardMaterial {
     return this.standard('label', {
       color: PALETTE.white,
@@ -110,12 +129,14 @@ export class MaterialLibrary {
     return this.standard('whiteMatte', { color: PALETTE.matte, roughness: 0.92, metalness: 0 });
   }
 
+  // Brand accents -----------------------------------------------------------
+
   /** Brand neon. Used sparingly, for small accents only. */
   neon(): THREE.MeshStandardMaterial {
     return this.standard('neon', { color: PALETTE.neon, roughness: 0.42, metalness: 0 });
   }
 
-  /** Grass green from the logo, toned down for printed bands and stripes. */
+  /** Brand grass green, for printed bands, stripes and trim. */
   leaf(): THREE.MeshStandardMaterial {
     return this.standard('leaf', { color: PALETTE.leaf, roughness: 0.45, metalness: 0 });
   }
@@ -125,24 +146,55 @@ export class MaterialLibrary {
   }
 
   forest(): THREE.MeshStandardMaterial {
-    return this.standard('forest', { color: PALETTE.forest, roughness: 0.6, metalness: 0 });
+    return this.standard('forest', { color: PALETTE.forestDeep, roughness: 0.6, metalness: 0 });
   }
 
-  steel(): THREE.MeshStandardMaterial {
-    return this.standard('steel', { color: PALETTE.steel, roughness: 0.42, metalness: 0.65 });
+  // Fixtures ----------------------------------------------------------------
+
+  /** Deep green lacquer for the display counter body. */
+  lacquer(): THREE.MeshPhysicalMaterial {
+    return this.physical('lacquer', {
+      color: PALETTE.lacquer,
+      roughness: 0.35,
+      metalness: 0.05,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.22,
+    });
   }
 
-  steelLight(): THREE.MeshStandardMaterial {
-    return this.standard('steelLight', { color: PALETTE.steelLight, roughness: 0.38, metalness: 0.6 });
+  /** Pale stone-look counter top. */
+  stone(): THREE.MeshPhysicalMaterial {
+    return this.physical('stone', {
+      color: PALETTE.stone,
+      roughness: 0.32,
+      metalness: 0,
+      clearcoat: 0.4,
+      clearcoatRoughness: 0.3,
+    });
   }
 
-  wood(): THREE.MeshStandardMaterial {
-    return this.standard('wood', { color: PALETTE.wood, roughness: 0.86, metalness: 0 });
+
+
+
+  /** Brushed metal trim and feet. */
+  chrome(): THREE.MeshStandardMaterial {
+    return this.standard('chrome', { color: PALETTE.chrome, roughness: 0.3, metalness: 0.8 });
   }
 
-  woodDark(): THREE.MeshStandardMaterial {
-    return this.standard('woodDark', { color: PALETTE.woodDark, roughness: 0.9, metalness: 0 });
+  /** Display base with a soft sheen. */
+  plinth(): THREE.MeshPhysicalMaterial {
+    return this.physical('plinth', {
+      color: PALETTE.plinth,
+      roughness: 0.42,
+      metalness: 0,
+      sheen: 0.6,
+      sheenColor: new THREE.Color(0xffffff),
+      clearcoat: 0.25,
+      clearcoatRoughness: 0.4,
+    });
   }
+
+  // Containers ----------------------------------------------------------------
 
   /** Glossy container body (tin / canister): clear-coated plastic or metal. */
   tin(): THREE.MeshPhysicalMaterial {
@@ -166,26 +218,12 @@ export class MaterialLibrary {
     });
   }
 
-  cloth(): THREE.MeshStandardMaterial {
-    return this.standard('cloth', { color: PALETTE.cloth, roughness: 0.95, metalness: 0 });
+  /** Display base cylinder (neutral). */
+  forestDeep(): THREE.MeshStandardMaterial {
+    return this.standard('forestDeep', { color: PALETTE.forestDeep, roughness: 0.6, metalness: 0 });
   }
 
-  clothDark(): THREE.MeshStandardMaterial {
-    return this.standard('clothDark', { color: PALETTE.clothDark, roughness: 0.95, metalness: 0 });
-  }
-
-  /** Display base with a soft sheen. */
-  plinth(): THREE.MeshPhysicalMaterial {
-    return this.physical('plinth', {
-      color: PALETTE.plinth,
-      roughness: 0.42,
-      metalness: 0,
-      sheen: 0.6,
-      sheenColor: new THREE.Color(0xffffff),
-      clearcoat: 0.25,
-      clearcoatRoughness: 0.4,
-    });
-  }
+  // Geometry ------------------------------------------------------------------
 
   /** Rounded box geometry, cached by size. */
   roundedBox(width: number, height: number, depth: number, radius = 0.02): THREE.BufferGeometry {

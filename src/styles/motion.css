@@ -20,6 +20,19 @@
 
 /* Header shadow and the sticky header state are handled in components.css. */
 
+/*
+ * Smooth wheel scrolling is handled by Lenis (client/smooth-scroll.ts) when the pinned product
+ * section is active. Native smooth scrolling must not stack on top of it.
+ */
+html.lenis,
+html.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+html.lenis {
+  height: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

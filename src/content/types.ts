@@ -24,7 +24,38 @@ export interface ImageAsset {
   placeholder?: boolean;
   /** CSS object-position used when cropping, e.g. "50% 30%". */
   position?: string;
+  /** Where a stand-in photograph came from, and the licence that allows publishing it. */
+  source?: string;
+  license?: string;
   /** Maintainer note. Never rendered. */
+  note?: string;
+}
+
+/**
+ * A real photograph with a depth map from scripts/depth/process-photos.py. The renderer
+ * (src/three/photo-depth.ts) uses `depth` to displace the photo in 3D. Where WebGL is not
+ * available the photo itself is shown, so the static fallback is always a real image.
+ */
+export interface PhotoAsset {
+  kind: 'photo';
+  /** Display photograph under /public, e.g. "/media/photos/counter.jpg". */
+  src: string;
+  /** 8-bit greyscale depth map, same aspect ratio. White = near, black = far. */
+  depth: string;
+  /** Pixel size of `src` and `depth`. Reserves space and fixes the 3D plane's aspect. */
+  width: number;
+  height: number;
+  /** Depth displacement in scene units, relative to the plane's height. Typical 0.2 to 0.4. */
+  depthScale?: number;
+  alt: string;
+  placeholder?: boolean;
+  position?: string;
+  /** Optional responsive sources, as for ImageAsset. */
+  srcset?: string;
+  sizes?: string;
+  /** Where the photograph came from, and the licence that allows publishing it. */
+  source?: string;
+  license?: string;
   note?: string;
 }
 
@@ -33,15 +64,17 @@ export interface TextureAsset {
   /** Path under /public. Used as a surface texture on 3D objects. */
   src: string;
   placeholder?: boolean;
+  source?: string;
+  license?: string;
   note?: string;
 }
 
-/** Placeholder geometry that the 3D system can build in code. */
 /**
  * Placeholder geometry the 3D system can build in code. `card` is a product-photo panel: it
  * lets a scene show product imagery in place of a 3D object, with no scene-code change.
+ * `plinth` is a round display base and `card` is a flat product-photo panel.
  */
-export type ProceduralBuilder = 'carton' | 'pallet' | 'tin' | 'sack' | 'rack' | 'plinth' | 'card';
+export type ProceduralBuilder = 'carton' | 'tin' | 'pouch' | 'plinth' | 'card';
 
 export interface ModelAsset {
   kind: 'model';
@@ -58,7 +91,7 @@ export interface ModelAsset {
   note?: string;
 }
 
-export type AssetDefinition = ImageAsset | TextureAsset | ModelAsset;
+export type AssetDefinition = ImageAsset | PhotoAsset | TextureAsset | ModelAsset;
 
 /** Identifiers for the 3D scenes that can be mounted into a stage slot. */
-export type StageSceneId = 'hero' | 'scale' | 'featured';
+export type StageSceneId = 'hero' | 'scale' | 'featured' | 'assembly';

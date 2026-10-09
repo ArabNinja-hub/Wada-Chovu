@@ -1,13 +1,14 @@
 import { copy } from '../content/copy.ts';
-import { site } from '../content/site.ts';
+import { enquiryChannel, site } from '../content/site.ts';
 
 /**
- * Wholesale enquiry form.
+ * Enquiry form.
  *
  * - Validates in the browser and marks each field with an accessible error message.
- * - Sends JSON to `site.enquiry.endpoint` when one is configured.
- * - Otherwise opens the visitor's email app with the enquiry filled in, addressed to
- *   `site.enquiry.emailTo`. This works with no server and no third-party service.
+ * - Sends JSON to `site.enquiry.endpoint` when one is a valid https:// URL.
+ * - Otherwise opens the visitor's email app, addressed to `site.enquiry.emailTo`, when that is a
+ *   real address (placeholder domains are rejected).
+ * - When neither is configured the form is disabled. Nothing is sent and no mail link is built.
  * - Includes a honeypot field. Filled-in honeypots are discarded silently.
  */
 
@@ -139,11 +140,19 @@ export function initEnquiryForm(): void {
     if (submitLabel) submitLabel.textContent = busy ? copy.enquiry.sending : copy.enquiry.submit;
   };
 
+  const channel = enquiryChannel();
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (status) {
       status.textContent = '';
       status.classList.remove('is-success', 'is-error');
+    }
+
+    // Not connected: send nothing, and say so.
+    if (channel === 'unconfigured') {
+      showStatus('error', copy.enquiry.notConnected);
+      return;
     }
 
     // Honeypot: real visitors never see or fill this field. Bots do, so drop the submission quietly.
@@ -184,8 +193,8 @@ export function initEnquiryForm(): void {
       submittedAt: new Date().toISOString(),
     };
 
-    if (!site.enquiry.endpoint) {
-      // No backend configured: hand the enquiry to the visitor's email app.
+    if (channel === 'email') {
+      // No endpoint configured: hand the enquiry to the visitor's email app.
       window.location.href = buildMailto(payload);
       showStatus('success', copy.enquiry.successWithEmail);
       return;
@@ -195,7 +204,7 @@ export function initEnquiryForm(): void {
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch(site.enquiry.endpoint, {
+      const response = await fetch(site.enquiry.endpoint.trim(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload),

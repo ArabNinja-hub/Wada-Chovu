@@ -1,6 +1,7 @@
 import { site } from '../content/site.ts';
 import { initEnquiryForm } from './enquiry-form.ts';
 import { initHeader } from './header.ts';
+import { STAGE_UNAVAILABLE } from '../three/stage-events.ts';
 import { detectQuality, type QualityTier } from './quality.ts';
 import { initReveal } from './reveal.ts';
 
@@ -27,10 +28,20 @@ async function startThreeD(): Promise<void> {
   const profile = detectQuality(devQualityOverride());
   if (profile.tier === 'none') return;
 
+  // The pinned assembly reserves scroll distance only while its 3D scene runs. If the scene
+  // cannot start, the reservation is released so the static images sit in normal flow.
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const pinned = document.querySelector<HTMLElement>('.assembly');
+  if (pinned && !reduced) pinned.classList.add('is-pinned');
+  document.addEventListener(STAGE_UNAVAILABLE, (event) => {
+    (event.target as Element | null)?.closest('.assembly')?.classList.remove('is-pinned');
+  });
+
   try {
     const { mountStage } = await import('../three/stage.ts');
     mountStage(slots, profile);
   } catch (error) {
+    pinned?.classList.remove('is-pinned');
     console.warn('3D scenes are unavailable; the static images remain in place.', error);
   }
 }

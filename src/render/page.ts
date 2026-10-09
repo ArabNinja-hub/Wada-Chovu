@@ -12,6 +12,7 @@ import { renderHeader } from './sections/header.ts';
 import { renderHero } from './sections/hero.ts';
 import { renderAbout } from './sections/about.ts';
 import { renderCategories } from './sections/categories.ts';
+import { renderAssembly } from './sections/assembly.ts';
 import { renderFeatured } from './sections/featured.ts';
 import { renderScale } from './sections/scale.ts';
 import { renderWhy } from './sections/why.ts';
@@ -26,6 +27,7 @@ export function renderPage(year: number = new Date().getFullYear()): string {
     renderHero(),
     renderAbout(),
     renderCategories(),
+    renderAssembly(),
     renderFeatured(),
     renderScale(),
     renderWhy(),
@@ -38,7 +40,7 @@ export function renderPage(year: number = new Date().getFullYear()): string {
 
 /** Head tags that depend on the site config: title, description, social previews, structured data. */
 export function renderHeadMeta(): string {
-  const title = `${site.name} | Wholesale & bulk supply`;
+  const title = `${site.name} | Retail shop in ${site.location.city}, Zambia`;
   const logo = ASSETS[site.logo];
   const logoSrc = logo.kind === 'image' ? logo.src : '';
   const absolute = (path: string) => (site.url ? `${site.url.replace(/\/$/, '')}${path}` : path);
@@ -46,10 +48,16 @@ export function renderHeadMeta(): string {
   const socialLinks = site.social.map((link) => link.href).filter(Boolean);
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'Store',
     name: site.name,
     legalName: site.legalName,
     description: site.description,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: site.location.city,
+      addressRegion: site.location.region,
+      addressCountry: site.location.countryCode,
+    },
     ...(site.url ? { url: site.url, logo: absolute(logoSrc) } : {}),
     ...(socialLinks.length ? { sameAs: socialLinks } : {}),
   };
@@ -67,7 +75,7 @@ export function renderHeadMeta(): string {
     `<meta name="twitter:card" content="summary_large_image">`,
     site.url ? `<link rel="canonical" href="${esc(absolute('/'))}">` : '',
     site.url ? `<meta property="og:url" content="${esc(absolute('/'))}">` : '',
-    `<link rel="icon" href="${esc(ASSETS['brand.favicon'].kind === 'image' ? ASSETS['brand.favicon'].src : '/brand/favicon.svg')}" type="image/svg+xml">`,
+    `<link rel="icon" href="${esc(ASSETS['brand.favicon'].src)}" type="image/png" sizes="64x64">`,
     `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`,
   ];
 

@@ -7,7 +7,10 @@ import type { SceneFactory } from '../types.ts';
  * here, and add a `data-stage` slot to the page.
  */
 export const SCENE_LOADERS: Record<StageSceneId, () => Promise<SceneFactory>> = {
-  hero: () => import('./hero.ts').then((m) => m.createHeroScene),
-  scale: () => import('./scale.ts').then((m) => m.createScaleScene),
+  // Hero and shop-floor slots are depth-displaced photographs. Each slot's `data-photo`
+  // attribute picks the photo, so both use the same scene module.
+  hero: () => import('./photo.ts').then((m) => m.createPhotoScene),
+  scale: () => import('./photo.ts').then((m) => m.createPhotoScene),
   featured: () => import('./featured.ts').then((m) => m.createFeaturedScene),
+  assembly: () => import('./assembly.ts').then((m) => m.createAssemblyScene),
 };
