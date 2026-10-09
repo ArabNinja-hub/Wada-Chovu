@@ -17,7 +17,7 @@ export function renderAssembly(): string {
   }).join('');
 
   return `
-<section class="section assembly" id="assembly" aria-labelledby="assembly-title">
+<section class="section assembly" id="assembly" data-stage-section aria-labelledby="assembly-title">
   <div class="assembly__pin">
     <div class="container assembly__head">
       ${eyebrow(copy.assembly.eyebrow)}

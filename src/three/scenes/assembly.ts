@@ -190,10 +190,36 @@ export const createAssemblyScene: SceneFactory = async (ctx, slot) => {
     return pose;
   };
 
+  // Values that decide what the frame looks like. A frame is drawn only when one of them has
+  // moved, so a pinned section that is not moving does not keep the GPU busy.
+  const watched = new Float64Array(ASSEMBLY_PRODUCT_COUNT * 3 + 3 + 3 + 2);
+  const previous = new Float64Array(watched.length).fill(Number.NaN);
+  let moving = true;
+
   const update = (frame: FrameState): void => {
     const next: AssemblyLayout = frame.aspect <= PORTRAIT_MAX_ASPECT ? 'portrait' : 'landscape';
     if (next !== layout) applyLayout(next);
     if (!plan) return;
+
+    let w = 0;
+    for (const p of state.products) {
+      watched[w++] = p.enter;
+      watched[w++] = p.form;
+      watched[w++] = p.converge;
+    }
+    watched[w++] = state.dolly;
+    watched[w++] = state.push;
+    watched[w++] = state.exit;
+    watched[w++] = frame.aspect;
+    watched[w++] = frame.reduced ? 0 : frame.pointer.x;
+    watched[w++] = frame.reduced ? 0 : frame.pointer.y;
+    watched[w++] = plan.halfW;
+    watched[w++] = plan.halfH;
+    moving = false;
+    for (let i = 0; i < watched.length; i++) {
+      if (!(Math.abs(watched[i] - previous[i]) <= 1e-5)) moving = true;
+    }
+    previous.set(watched);
 
     // Camera: starts a little further back, settles, pushes in a touch during the hold,
     // and pulls back as the composition leaves. Pointer movement adds a slight parallax.
@@ -257,7 +283,6 @@ export const createAssemblyScene: SceneFactory = async (ctx, slot) => {
       end: () => `+=${Math.max(1, section.offsetHeight - pin.offsetHeight)}`,
       pin,
       pinSpacing: false,
-      anticipatePin: 1,
       scrub: 0.6,
       invalidateOnRefresh: true,
       animation: timeline,
@@ -274,7 +299,9 @@ export const createAssemblyScene: SceneFactory = async (ctx, slot) => {
     void document.fonts?.ready.then(refresh);
     refresh();
 
-    handle.needsFrame = () => trigger?.isActive === true || timeline?.isActive() === true;
+    // Frames continue while the section is pinned and something is still moving. Scroll
+    // updates, pointer movement and resizes request a frame themselves.
+    handle.needsFrame = () => trigger?.isActive === true && moving;
   }
 
   handle.dispose = () => {
