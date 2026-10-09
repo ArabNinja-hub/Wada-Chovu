@@ -21,3 +21,7 @@ npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 *.log
+
+# Depth model weights (fetched by scripts/depth/fetch-model.py) and original photo sources
+scripts/depth/models/
+.venv-depth/

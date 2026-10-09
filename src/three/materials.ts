@@ -30,9 +30,6 @@ const PALETTE = {
   // Fixtures
   lacquer: 0x0f3319,
   stone: 0xefebe2,
-  shelfFrame: 0xeef1ec,
-  shelfBoard: 0xf8f9f6,
-  shelfBack: 0xe2eadf,
   chrome: 0xb9c3bd,
 
   // Containers
@@ -176,20 +173,8 @@ export class MaterialLibrary {
     });
   }
 
-  /** Gondola uprights: white powder-coated steel. */
-  shelfFrame(): THREE.MeshStandardMaterial {
-    return this.standard('shelfFrame', { color: PALETTE.shelfFrame, roughness: 0.4, metalness: 0.25 });
-  }
 
-  /** Gondola shelf boards: white, slightly glossy. */
-  shelfBoard(): THREE.MeshStandardMaterial {
-    return this.standard('shelfBoard', { color: PALETTE.shelfBoard, roughness: 0.5, metalness: 0 });
-  }
 
-  /** Gondola back panel. */
-  shelfBack(): THREE.MeshStandardMaterial {
-    return this.standard('shelfBack', { color: PALETTE.shelfBack, roughness: 0.8, metalness: 0 });
-  }
 
   /** Brushed metal trim and feet. */
   chrome(): THREE.MeshStandardMaterial {

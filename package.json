@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit && vite build && node scripts/verify-dist.mjs",
     "preview": "vite preview",
-    "placeholders": "node scripts/generate-placeholders.mjs"
+    "photos:fetch-model": "python3 scripts/depth/fetch-model.py",
+    "photos:depth": "python3 scripts/depth/process-photos.py --sources"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",

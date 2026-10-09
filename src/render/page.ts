@@ -73,7 +73,7 @@ export function renderHeadMeta(): string {
     `<meta name="twitter:card" content="summary_large_image">`,
     site.url ? `<link rel="canonical" href="${esc(absolute('/'))}">` : '',
     site.url ? `<meta property="og:url" content="${esc(absolute('/'))}">` : '',
-    `<link rel="icon" href="${esc(ASSETS['brand.favicon'].kind === 'image' ? ASSETS['brand.favicon'].src : '/brand/favicon.svg')}" type="image/svg+xml">`,
+    `<link rel="icon" href="${esc(ASSETS['brand.favicon'].src)}" type="image/png" sizes="64x64">`,
     `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`,
   ];
 

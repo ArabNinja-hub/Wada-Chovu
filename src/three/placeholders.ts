@@ -7,9 +7,9 @@ import type { MaterialLibrary } from './materials.ts';
  * Placeholder models, built in code.
  *
  * These stand in for the real Chovu Chovu Brothers Ltd products and fixtures until .glb
- * models or product photos are supplied. They are deliberately finished, neutral objects, not
- * raw primitives: a product box, a glossy tin, a product pouch, a display counter, retail
- * gondola shelving, a display plinth, and a product-photo card. They share the palette and
+ * models are supplied. They are deliberately finished, neutral objects, not
+ * raw primitives: a product box, a glossy tin, a product pouch, a display plinth, and a
+ * product-photo card. They share the palette and
  * lighting of the live scenes so the demo reads as one intentional shop set.
  *
  * The `card` builder is the product-imagery path: it shows a product photo on a framed panel
@@ -21,13 +21,6 @@ import type { MaterialLibrary } from './materials.ts';
  */
 
 type Vec3 = [number, number, number];
-
-/** Gondola shelf deck heights, as fractions of the shelf height. Shared with the shop scene. */
-export const SHELF_DECK_FRACTIONS = [0.04, 0.3, 0.56, 0.78] as const;
-/** Thickness of a shelf deck, and how far its top surface sits above the deck's centre line. */
-export const SHELF_DECK_TOP = 0.02;
-/** Height of the header sign along the top of the shelf unit. */
-export const SHELF_HEADER_H = 0.16;
 
 function mesh(
   geometry: THREE.BufferGeometry,
@@ -67,25 +60,6 @@ function buildCarton(m: MaterialLibrary): THREE.Group {
  * A shop display counter: a deep green lacquered body on a dark recessed kick, a pale stone
  * top and a brand-green fascia strip. Its top surface is where products are displayed.
  */
-function buildCounter(m: MaterialLibrary): THREE.Group {
-  const g = new THREE.Group();
-  g.name = 'counter';
-  const W = 1.2;
-  const D = 0.8;
-  const kickH = 0.06;
-  const bodyH = 0.56;
-  const topH = 0.05;
-
-  // Recessed kick, dark, so the counter reads as floating on its base.
-  g.add(mesh(m.box(W - 0.1, kickH, D - 0.1), m.forestDeep(), [0, kickH / 2, 0]));
-  // Lacquered body.
-  g.add(mesh(m.roundedBox(W - 0.04, bodyH - kickH, D - 0.04, 0.02), m.lacquer(), [0, kickH + (bodyH - kickH) / 2, 0]));
-  // Stone-look top with a slight overhang.
-  g.add(mesh(m.roundedBox(W, topH, D, 0.015), m.stone(), [0, bodyH + topH / 2, 0]));
-  // Brand-green fascia strip on the front.
-  g.add(mesh(m.plane(W * 0.7, 0.05), m.leaf(), [0, bodyH * 0.45, D / 2 - 0.018]));
-  return g;
-}
 
 /** A product pouch: a soft pillow bag with a gathered, crimped top, a seam and a label. */
 function buildPouch(m: MaterialLibrary): THREE.Group {
@@ -116,42 +90,6 @@ function buildPouch(m: MaterialLibrary): THREE.Group {
   // Small front label with a green band.
   g.add(mesh(m.roundedBox(0.24, 0.15, 0.012, 0.02), m.whiteMatte(), [0, H * 0.42, 0.113]));
   g.add(mesh(m.box(0.24, 0.03, 0.014), m.leaf(), [0, H * 0.345, 0.114]));
-  return g;
-}
-
-/**
- * Retail gondola shelving: white uprights and shelf boards, a light back panel, green front
- * trim on each shelf and a deep green header sign. Shelf heights follow SHELF_DECK_FRACTIONS.
- */
-function buildShelf(m: MaterialLibrary): THREE.Group {
-  const g = new THREE.Group();
-  g.name = 'shelf';
-  const W = 2.4;
-  const H = 2;
-  const D = 0.9;
-  const post = 0.07;
-
-  // Back panel.
-  g.add(mesh(m.box(W - post, H - SHELF_HEADER_H, 0.02), m.shelfBack(), [0, (H - SHELF_HEADER_H) / 2, -D / 2 + 0.012]));
-
-  // Uprights and small feet.
-  for (const x of [-W / 2 + post / 2, W / 2 - post / 2]) {
-    for (const z of [-D / 2 + post / 2, D / 2 - post / 2]) {
-      g.add(mesh(m.box(post, H, post), m.shelfFrame(), [x, H / 2, z]));
-      g.add(mesh(m.box(post + 0.03, 0.02, post + 0.03), m.chrome(), [x, 0.01, z]));
-    }
-  }
-
-  // Shelf boards, each with a green front trim.
-  for (const fraction of SHELF_DECK_FRACTIONS) {
-    const y = fraction * H;
-    g.add(mesh(m.box(W - post, 0.04, D - post), m.shelfBoard(), [0, y, 0]));
-    g.add(mesh(m.box(W - post, 0.05, 0.02), m.leaf(), [0, y, D / 2 - post / 2 - 0.01]));
-  }
-
-  // Header sign across the top, with a neon trim line underneath.
-  g.add(mesh(m.box(W, SHELF_HEADER_H, 0.05), m.forest(), [0, H - SHELF_HEADER_H / 2, D / 2 - 0.025]));
-  g.add(mesh(m.box(W - 0.1, 0.012, 0.02), m.neon(), [0, H - SHELF_HEADER_H - 0.006, D / 2 + 0.002]));
   return g;
 }
 
@@ -224,10 +162,8 @@ function buildCard(m: MaterialLibrary): THREE.Group {
 
 const BUILDERS: Record<ProceduralBuilder, (m: MaterialLibrary) => THREE.Group> = {
   carton: buildCarton,
-  counter: buildCounter,
   tin: buildTin,
   pouch: buildPouch,
-  shelf: buildShelf,
   plinth: buildPlinth,
   card: buildCard,
 };

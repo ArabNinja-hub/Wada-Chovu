@@ -31,6 +31,11 @@ export interface SceneHandle {
   update(frame: FrameState): void;
 }
 
+/** The stage slot a scene is mounted into. Scenes read their configuration from its attributes. */
+export interface SceneSlot {
+  el: HTMLElement;
+}
+
 /** Shared services provided to every scene factory. */
 export interface SceneContext {
   renderer: THREE.WebGLRenderer;
@@ -41,4 +46,4 @@ export interface SceneContext {
   environment: THREE.Texture | null;
 }
 
-export type SceneFactory = (ctx: SceneContext) => Promise<SceneHandle>;
+export type SceneFactory = (ctx: SceneContext, slot: SceneSlot) => Promise<SceneHandle>;

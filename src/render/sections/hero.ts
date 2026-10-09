@@ -30,7 +30,7 @@ export function renderHero(): string {
       <div class="arch" aria-hidden="true"><span class="arch__sun"></span></div>
       ${renderStageSlot({
         scene: 'hero',
-        fallback: 'hero.fallback',
+        fallback: 'photo.hero',
         label: copy.hero.visualLabel,
         className: 'hero__stage',
         fetchPriority: 'high',

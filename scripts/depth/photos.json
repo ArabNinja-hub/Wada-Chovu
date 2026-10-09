@@ -1,0 +1,26 @@
+{
+  "$comment": "Source photographs for the depth pipeline. 'file' is relative to --sources and is NOT committed. Every photo listed here must have a licence that allows publishing on the site, recorded in 'license'. 'sourceUrl' is the page the photo was taken from.",
+  "photos": [
+    {
+      "id": "counter",
+      "file": "unsplash-counter-shelves.jpg",
+      "sourceUrl": "https://unsplash.com/photos/a-minimalist-shop-with-shelves-and-products-nzisN6dYiV8",
+      "license": "Unsplash License (free to use; attribution not required)",
+      "subject": "Retail counter with shelving of unbranded products. Stand-in, not a photo of the Chovu Chovu shop."
+    },
+    {
+      "id": "interior",
+      "file": "unsplash-grocery-interior.jpg",
+      "sourceUrl": "https://unsplash.com/photos/interior-of-a-well-stocked-grocery-store-with-aisles-of-goods-yKn3cfE_XXU",
+      "license": "Unsplash License (free to use; attribution not required)",
+      "subject": "Interior of a well-stocked grocery store with shelves. Stand-in, not a photo of the Chovu Chovu shop."
+    },
+    {
+      "id": "tins",
+      "file": "pexels-canned-goods.jpg",
+      "sourceUrl": "https://www.pexels.com/search/canned%20food/",
+      "license": "Pexels License (free to use; attribution not required)",
+      "subject": "Stack of unbranded canned goods. Stand-in product photograph."
+    }
+  ]
+}

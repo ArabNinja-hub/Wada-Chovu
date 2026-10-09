@@ -23,7 +23,7 @@ export const copy = {
     primaryCta: 'Send an enquiry',
     secondaryCta: 'Browse categories',
     points: ['Large retail shop', 'Shop in person in Luanshya', 'Enquire before you visit'],
-    visualLabel: 'Decorative 3D view of products arranged on a shop display counter',
+    visualLabel: 'Decorative 3D view of a shop counter photograph, with depth',
   },
 
   about: {

@@ -25,7 +25,7 @@ export function renderScale(): string {
     <div class="scale__stage" data-reveal style="--d: 120ms">
       ${renderStageSlot({
         scene: 'scale',
-        fallback: 'scale.fallback',
+        fallback: 'photo.shopFloor',
         label: copy.scale.visualLabel,
         className: 'scale__slot',
       })}

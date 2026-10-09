@@ -138,7 +138,7 @@ class Stage {
     try {
       const factory = await SCENE_LOADERS[slot.id]();
       const context = this.ensureContext();
-      const handle = await factory(context);
+      const handle = await factory(context, { el: slot.el });
       if (!this.active) return;
       try {
         this.renderer?.compile(handle.scene, handle.camera);

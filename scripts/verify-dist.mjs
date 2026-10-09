@@ -25,7 +25,7 @@
  *      live site instead of 404ing at the domain root.
  *   6. The deploy workflow uploads `dist` — never the repository root.
  */
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -179,6 +179,32 @@ check(
 );
 
 // Summary -------------------------------------------------------------------------
+
+// The site uses real photographs and GLB models only. Fail if any SVG file or SVG markup is
+// shipped, so vector artwork cannot creep back in.
+function walk(dir) {
+  const out = [];
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name);
+    if (statSync(full).isDirectory()) out.push(...walk(full));
+    else out.push(full);
+  }
+  return out;
+}
+const shipped = walk(distDir);
+const svgFiles = shipped.filter((file) => /\.svg$/i.test(file));
+check(
+  svgFiles.length === 0,
+  'no SVG files are shipped',
+  `SVG files must not be shipped: ${svgFiles.map(rel).join(', ')}`,
+);
+const markupFiles = shipped.filter((file) => /\.(html|css)$/i.test(file));
+const svgMarkup = markupFiles.filter((file) => /<svg\b|image\/svg\+xml/i.test(readFileSync(file, 'utf8')));
+check(
+  svgMarkup.length === 0,
+  'no SVG markup in HTML or CSS',
+  `SVG markup found in: ${svgMarkup.map(rel).join(', ')}`,
+);
 
 if (failures.length > 0) {
   console.error('');

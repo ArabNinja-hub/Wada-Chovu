@@ -2,14 +2,132 @@
 
 /* Icons -------------------------------------------------------------------- */
 
-/* Line icons: stroked, never filled. Set once so every icon in the site matches. */
+/* Icons are CSS shapes in currentColor. No vector artwork and no image files. */
 .icon {
   flex: none;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  position: relative;
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  color: currentColor;
+}
+
+.icon--check::after {
+  content: "";
+  position: absolute;
+  left: 34%;
+  top: 14%;
+  width: 0.36em;
+  height: 0.7em;
+  border: solid currentColor;
+  border-width: 0 0.14em 0.14em 0;
+  transform: rotate(45deg);
+}
+
+.icon--arrow::before {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  top: 50%;
+  height: 0.14em;
+  margin-top: -0.07em;
+  border-radius: 0.07em;
+  background: currentColor;
+}
+
+.icon--arrow::after {
+  content: "";
+  position: absolute;
+  right: 17%;
+  top: 50%;
+  width: 0.5em;
+  height: 0.5em;
+  margin-top: -0.25em;
+  border: solid currentColor;
+  border-width: 0.14em 0.14em 0 0;
+  transform: rotate(45deg);
+}
+
+.icon--up {
+  transform: rotate(-90deg);
+}
+
+.icon--pin::before {
+  content: "";
+  position: absolute;
+  left: 22%;
+  top: 12%;
+  width: 56%;
+  height: 56%;
+  border: 0.14em solid currentColor;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+}
+
+.icon--mail::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 22%;
+  bottom: 22%;
+  border: 0.14em solid currentColor;
+  border-radius: 0.14em;
+}
+
+.icon--mail::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  top: 30%;
+  width: 0.5em;
+  height: 0.5em;
+  border: solid currentColor;
+  border-width: 0 0 0.14em 0.14em;
+  transform: translateX(0.12em) rotate(-45deg) translate(0, 0.02em);
+}
+
+.icon--chat::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 14%;
+  bottom: 24%;
+  border: 0.14em solid currentColor;
+  border-radius: 0.3em;
+}
+
+.icon--clock::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border: 0.14em solid currentColor;
+  border-radius: 50%;
+}
+
+.icon--clock::after {
+  content: "";
+  position: absolute;
+  left: 46%;
+  top: 26%;
+  width: 0.14em;
+  height: 30%;
+  background: currentColor;
+  border-radius: 0.07em;
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.icon--phone::before {
+  content: "";
+  position: absolute;
+  left: 30%;
+  top: 8%;
+  width: 40%;
+  height: 84%;
+  border: 0.14em solid currentColor;
+  border-radius: 0.3em;
 }
 
 /* Buttons ---------------------------------------------------------------- */
@@ -638,10 +756,13 @@ html:not(.js) .primary-nav__cta {
 .field__select {
   appearance: none;
   padding-right: 2.6rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a2413' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  /* Chevron drawn with two gradients, so there is no image file. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, #0a2413 50%),
+    linear-gradient(135deg, #0a2413 50%, transparent 50%);
   background-repeat: no-repeat;
-  background-position: right 0.9rem center;
-  background-size: 1.15rem;
+  background-position: calc(100% - 1.15rem) 55%, calc(100% - 0.85rem) 55%;
+  background-size: 0.42rem 0.42rem, 0.42rem 0.42rem;
 }
 
 .field.is-invalid .field__input {

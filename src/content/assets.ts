@@ -1,23 +1,29 @@
 /**
  * ASSET MANIFEST
  * ==============
- * Every photo, texture and 3D model used by the site is listed here, once.
+ * Every photograph, depth map, texture and 3D model used by the site is listed here, once.
  *
- * To replace a placeholder with a real file:
- *   1. Copy the file into /public (for example /public/media/products/rice-25kg.jpg).
- *   2. Change `src` below to that path, set `alt` to a real description,
- *      and remove `placeholder: true`.
- *   3. Rebuild. No component or layout code needs to change.
+ * ADDING A PHOTO (no animation code needed)
+ *   1. Put the original file in a folder outside the repository, and add an entry to
+ *      scripts/depth/photos.json (id, file, sourceUrl, license, subject).
+ *   2. Run:  python3 scripts/depth/process-photos.py --sources <folder>
+ *      This writes public/media/photos/<id>.jpg and <id>-depth.png and prints the size.
+ *   3. Add a `photo.<name>` entry below with those paths and the printed width and height.
+ *   4. Use it in a section with renderStageSlot({ fallback: 'photo.<name>' }) to make it a
+ *      3D depth scene, or with renderImage('photo.<name>') for a plain photograph.
  *
- * To replace a placeholder 3D object with a .glb / .gltf model:
- *   1. Copy the file into /public/models (for example /public/models/carton.glb).
- *   2. Set `url` on the matching `model.*` entry. Its size is normalised to `fit`,
- *      so the scenes keep the same composition and animation.
+ * REPLACING A 3D MODEL
+ *   Copy the .glb / .gltf into /public/models and set `url` on the matching `model.*` entry.
+ *   Its size is normalised to `fit`, so scene layout does not change.
  *
- * Components refer to these keys only (for example 'category.one'). Renaming a key
- * is a compile-time error everywhere it is used, which is intentional.
+ * Components refer to these keys only. Renaming a key is a compile-time error everywhere it
+ * is used, which is intentional.
  */
-import type { AssetDefinition, ImageAsset, ModelAsset, TextureAsset } from './types.ts';
+import type { AssetDefinition, ImageAsset, ModelAsset, PhotoAsset, TextureAsset } from './types.ts';
+
+const SOURCE_COUNTER = 'https://unsplash.com/photos/a-minimalist-shop-with-shelves-and-products-nzisN6dYiV8';
+const SOURCE_INTERIOR = 'https://unsplash.com/photos/interior-of-a-well-stocked-grocery-store-with-aisles-of-goods-yKn3cfE_XXU';
+const LICENSE_UNSPLASH = 'Unsplash License (free to use; attribution not required)';
 
 export const ASSETS = {
   // ---------------------------------------------------------------------------
@@ -33,144 +39,149 @@ export const ASSETS = {
   },
   'brand.favicon': {
     kind: 'image',
-    src: '/brand/favicon.svg',
+    src: '/brand/favicon.png',
     width: 64,
     height: 64,
     alt: '',
-    note: 'Simplified mark drawn from the supplied logo. Replace with an official icon when available.',
+    note: 'Raster icon cropped from the supplied logo. Replace with an official icon when available.',
   },
 
   // ---------------------------------------------------------------------------
-  // Hero and 3D fallbacks (shown when the 3D scene is off or unsupported)
+  // 3D photo scenes. Each is a real photograph displaced by its depth map.
+  // The `fallback` image shown without WebGL is the same photograph.
   // ---------------------------------------------------------------------------
-  'hero.fallback': {
-    kind: 'image',
-    src: '/media/placeholders/hero-fallback.svg',
-    width: 1000,
-    height: 1000,
-    alt: 'Illustration of products arranged on a shop display counter',
+  'photo.hero': {
+    kind: 'photo',
+    src: '/media/photos/counter.jpg',
+    depth: '/media/photos/counter-depth.png',
+    width: 960,
+    height: 1280,
+    depthScale: 0.32,
+    alt: 'Stand-in photograph of a retail counter with shelves of unbranded products. Replace it with a photo of the Chovu Chovu shop.',
     placeholder: true,
-    note: 'Static stand-in for the hero 3D scene. Replace with a square photo of the shop display (1:1).',
+    source: SOURCE_COUNTER,
+    license: LICENSE_UNSPLASH,
+    note: 'Hero 3D photo. Depth map from FastDepth (scripts/depth). Replace with a portrait photo of the shop counter.',
   },
-  'scale.fallback': {
-    kind: 'image',
-    src: '/media/placeholders/scale-fallback.svg',
-    width: 1600,
-    height: 1000,
-    alt: 'Illustration of shop shelving with products on display',
+  'photo.shopFloor': {
+    kind: 'photo',
+    src: '/media/photos/interior.jpg',
+    depth: '/media/photos/interior-depth.png',
+    width: 1280,
+    height: 853,
+    depthScale: 0.4,
+    alt: 'Stand-in photograph of a shop interior with shelves and aisles. Replace it with a photo of the Chovu Chovu shop floor.',
     placeholder: true,
-    note: 'Static stand-in for the shop-floor 3D scene. Replace with a photo of the shop shelves (16:10).',
+    source: SOURCE_INTERIOR,
+    license: LICENSE_UNSPLASH,
+    note: 'Shop-floor 3D photo. Depth map from FastDepth (scripts/depth). Replace with a landscape photo of the shop floor.',
   },
+
+  // ---------------------------------------------------------------------------
+  // Static photographs (fallbacks and plain images)
+  // ---------------------------------------------------------------------------
   'featured.fallback': {
     kind: 'image',
-    src: '/media/placeholders/featured-fallback.svg',
-    width: 1200,
-    height: 900,
-    alt: 'Illustration of tins and pouches on a display base',
+    src: '/media/photos/tins.jpg',
+    width: 500,
+    height: 333,
+    alt: 'Stand-in photograph of stacked canned goods',
     placeholder: true,
-    note: 'Static stand-in for the featured 3D scene. Replace with a product group photo (4:3).',
+    note: 'Static image shown when WebGL is unavailable for the featured 3D scene. Replace with a product group photo (3:2).',
   },
-
-  // ---------------------------------------------------------------------------
-  // Shop, team and location photography
-  // ---------------------------------------------------------------------------
   'about.image': {
     kind: 'image',
-    src: '/media/placeholders/shop.svg',
-    width: 800,
-    height: 1000,
-    alt: 'Placeholder: photo of the shop front or team',
+    src: '/media/photos/counter.jpg',
+    width: 960,
+    height: 1280,
+    alt: 'Stand-in photograph of a retail counter with shelves. Replace it with a photo of the shop front or team.',
     placeholder: true,
-    note: 'Shown in an arch frame. Portrait crop (4:5) works best. Use a photo of the shop front, interior or team.',
+    note: 'Shown in an arch frame. Portrait crop (4:5) works best.',
   },
   'location.image': {
     kind: 'image',
-    src: '/media/placeholders/location.svg',
+    src: '/media/photos/interior.jpg',
     width: 1280,
-    height: 800,
-    alt: 'Placeholder: photo of the shop exterior',
+    height: 853,
+    alt: 'Stand-in photograph of a shop interior. The exterior photograph has not been supplied yet.',
     placeholder: true,
-    note: 'Shop exterior or street view (16:10).',
+    note: 'Shop exterior or street view (16:10). No licensed exterior photograph is in the repository yet.',
   },
 
   // ---------------------------------------------------------------------------
-  // Product category images
+  // Product category and featured product images (stand-ins until real photos are supplied)
   // ---------------------------------------------------------------------------
   'category.one': {
     kind: 'image',
-    src: '/media/placeholders/product.svg',
-    width: 800,
-    height: 600,
-    alt: 'Placeholder: product category photo',
+    src: '/media/photos/interior.jpg',
+    width: 1280,
+    height: 853,
+    alt: 'Stand-in photograph of a shop interior with shelves',
     placeholder: true,
-    note: 'Category photo (4:3). Each category has its own key so each can be swapped independently.',
+    note: 'Category photo. Each category has its own key so each can be swapped independently.',
   },
   'category.two': {
     kind: 'image',
-    src: '/media/placeholders/product.svg',
-    width: 800,
-    height: 600,
-    alt: 'Placeholder: product category photo',
+    src: '/media/photos/counter.jpg',
+    width: 960,
+    height: 1280,
+    alt: 'Stand-in photograph of a retail counter with shelves',
     placeholder: true,
-    note: 'Category photo (4:3).',
+    note: 'Category photo.',
   },
   'category.three': {
     kind: 'image',
-    src: '/media/placeholders/product.svg',
-    width: 800,
-    height: 600,
-    alt: 'Placeholder: product category photo',
+    src: '/media/photos/tins.jpg',
+    width: 500,
+    height: 333,
+    alt: 'Stand-in photograph of stacked canned goods',
     placeholder: true,
-    note: 'Category photo (4:3).',
+    note: 'Category photo.',
   },
   'category.four': {
     kind: 'image',
-    src: '/media/placeholders/product.svg',
-    width: 800,
-    height: 600,
-    alt: 'Placeholder: product category photo',
+    src: '/media/photos/interior.jpg',
+    width: 1280,
+    height: 853,
+    alt: 'Stand-in photograph of a shop interior with shelves',
     placeholder: true,
-    note: 'Category photo (4:3).',
+    note: 'Category photo.',
   },
-
-  // ---------------------------------------------------------------------------
-  // Featured product images
-  // ---------------------------------------------------------------------------
   'product.one': {
     kind: 'image',
-    src: '/media/placeholders/product.svg',
-    width: 800,
-    height: 600,
-    alt: 'Placeholder: featured product photo',
+    src: '/media/photos/tins.jpg',
+    width: 500,
+    height: 333,
+    alt: 'Stand-in photograph of stacked canned goods',
     placeholder: true,
-    note: 'Product photo (4:3), ideally on a plain background.',
+    note: 'Product photo, ideally on a plain background.',
   },
   'product.two': {
     kind: 'image',
-    src: '/media/placeholders/product.svg',
-    width: 800,
-    height: 600,
-    alt: 'Placeholder: featured product photo',
+    src: '/media/photos/counter.jpg',
+    width: 960,
+    height: 1280,
+    alt: 'Stand-in photograph of a retail counter with shelves',
     placeholder: true,
-    note: 'Product photo (4:3).',
+    note: 'Product photo.',
   },
   'product.three': {
     kind: 'image',
-    src: '/media/placeholders/product.svg',
-    width: 800,
-    height: 600,
-    alt: 'Placeholder: featured product photo',
+    src: '/media/photos/tins.jpg',
+    width: 500,
+    height: 333,
+    alt: 'Stand-in photograph of stacked canned goods',
     placeholder: true,
-    note: 'Product photo (4:3).',
+    note: 'Product photo.',
   },
   'product.four': {
     kind: 'image',
-    src: '/media/placeholders/product.svg',
-    width: 800,
-    height: 600,
-    alt: 'Placeholder: featured product photo',
+    src: '/media/photos/interior.jpg',
+    width: 1280,
+    height: 853,
+    alt: 'Stand-in photograph of a shop interior with shelves',
     placeholder: true,
-    note: 'Product photo (4:3).',
+    note: 'Product photo.',
   },
 
   // ---------------------------------------------------------------------------
@@ -178,61 +189,53 @@ export const ASSETS = {
   // ---------------------------------------------------------------------------
   'texture.cartonLabel': {
     kind: 'texture',
-    src: '/media/placeholders/label.png',
+    src: '/media/photos/tins.jpg',
     placeholder: true,
-    note: 'Printed on the front label of placeholder product boxes. Neutral artwork by default. Swap for product label artwork or a product photo.',
+    note: 'Printed on the front label of the box fallback geometry. Replace with label artwork.',
   },
   'texture.productCard': {
     kind: 'texture',
-    src: '/media/placeholders/product-card.png',
+    src: '/media/photos/tins.jpg',
     placeholder: true,
-    note: 'Product photo shown on 3D product-photo cards (the `card` placeholder). Neutral artwork by default. Replace with a real product photo on a plain background.',
+    note: 'Product photo shown on the flat product-photo card (the `card` model). The card is a flat photograph, not a 3D object.',
   },
 
   // ---------------------------------------------------------------------------
-  // 3D models (placeholder geometry until a .glb / .gltf url is set)
+  // 3D models. Real GLB files; the builder is the fallback if a file fails to load.
+  // Attribution for the sample models is in public/models/CREDITS.md.
   // ---------------------------------------------------------------------------
-  'model.carton': {
+  'model.bottle': {
     kind: 'model',
-    builder: 'carton',
-    fit: 1,
-    note: 'Placeholder product box. Set url to "/models/carton.glb" to use a real product model.',
-  },
-  'model.counter': {
-    kind: 'model',
-    builder: 'counter',
-    fit: 1.2,
-    note: 'Shop display counter. Largest dimension is the width. Scenes stack products on its top surface.',
-  },
-  'model.tin': {
-    kind: 'model',
+    url: '/models/water-bottle.glb',
     builder: 'tin',
-    fit: 0.72,
-    note: 'Placeholder product container (tin or canister).',
+    fit: 0.95,
+    note: 'Khronos WaterBottle sample (CC0). Placeholder product model; not a Chovu Chovu product.',
   },
-  'model.pouch': {
+  'model.produce': {
     kind: 'model',
-    builder: 'pouch',
+    url: '/models/avocado.glb',
+    builder: 'tin',
+    fit: 0.6,
+    note: 'Khronos Avocado sample (CC0). Placeholder product model; not a Chovu Chovu product.',
+  },
+  'model.box': {
+    kind: 'model',
+    url: '/models/box-textured.glb',
+    builder: 'carton',
     fit: 0.9,
-    note: 'Placeholder product pouch or bag.',
-  },
-  'model.shelf': {
-    kind: 'model',
-    builder: 'shelf',
-    fit: 2.6,
-    note: 'Retail gondola shelving. Products are placed by the scene, not by the model.',
+    note: 'Khronos BoxTextured sample (CC BY 4.0, attribution in public/models/CREDITS.md). Placeholder product model.',
   },
   'model.plinth': {
     kind: 'model',
     builder: 'plinth',
     fit: 2,
-    note: 'Round display base.',
+    note: 'Round display base (procedural geometry, no file).',
   },
   'model.card': {
     kind: 'model',
     builder: 'card',
     fit: 1,
-    note: 'Product-photo card (product imagery in a 3D scene). To show a product photo instead of a 3D object, set that model key\'s `builder` to \'card\' and point `texture.productCard` at the photo.',
+    note: 'Flat product-photo card using texture.productCard. Use only for product imagery, not as a 3D object.',
   },
 } satisfies Record<string, AssetDefinition>;
 
@@ -241,29 +244,38 @@ export type AssetKey = keyof typeof ASSETS;
 
 type KindOf<K extends AssetKey> = (typeof ASSETS)[K] extends { kind: infer T } ? T : never;
 
-/** Keys whose asset is an image (photos, illustrations, fallbacks). */
-export type ImageKey = { [K in AssetKey]: KindOf<K> extends 'image' ? K : never }[AssetKey];
+/** Keys whose asset is a plain image (includes photographs used as images). */
+export type ImageKey = { [K in AssetKey]: KindOf<K> extends 'image' | 'photo' ? K : never }[AssetKey];
+/** Keys whose asset is a photograph with a depth map (3D photo scenes). */
+export type PhotoKey = { [K in AssetKey]: KindOf<K> extends 'photo' ? K : never }[AssetKey];
 /** Keys whose asset is a texture. */
 export type TextureKey = { [K in AssetKey]: KindOf<K> extends 'texture' ? K : never }[AssetKey];
 /** Keys whose asset is a 3D model. */
 export type ModelKey = { [K in AssetKey]: KindOf<K> extends 'model' ? K : never }[AssetKey];
 
-function requireKind<T extends AssetDefinition>(key: AssetKey, kind: T['kind']): T {
+function requireKind<T extends AssetDefinition>(key: AssetKey, kinds: ReadonlyArray<T['kind']>): T {
   const asset = ASSETS[key] as AssetDefinition;
-  if (asset.kind !== kind) {
-    throw new Error(`Asset "${key}" is a ${asset.kind}, expected ${kind}.`);
+  if (!(kinds as ReadonlyArray<string>).includes(asset.kind)) {
+    throw new Error(`Asset "${key}" is a ${asset.kind}, expected ${kinds.join(' or ')}.`);
   }
   return asset as T;
 }
 
-export function getImage(key: ImageKey): ImageAsset {
-  return requireKind<ImageAsset>(key, 'image');
+/** Shared shape for anything rendered as an <img>. Photographs carry the same fields. */
+export type ImageLike = ImageAsset | PhotoAsset;
+
+export function getImage(key: ImageKey): ImageLike {
+  return requireKind<ImageLike>(key, ['image', 'photo']);
+}
+
+export function getPhoto(key: PhotoKey): PhotoAsset {
+  return requireKind<PhotoAsset>(key, ['photo']);
 }
 
 export function getTexture(key: TextureKey): TextureAsset {
-  return requireKind<TextureAsset>(key, 'texture');
+  return requireKind<TextureAsset>(key, ['texture']);
 }
 
 export function getModel(key: ModelKey): ModelAsset {
-  return requireKind<ModelAsset>(key, 'model');
+  return requireKind<ModelAsset>(key, ['model']);
 }
