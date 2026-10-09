@@ -23,18 +23,17 @@ export const copy = {
     primaryCta: 'Send an enquiry',
     secondaryCta: 'Browse categories',
     points: ['Retail shop in Luanshya', 'Shop in person in Luanshya', 'Enquire before you visit'],
-    visualLabel: 'Decorative 3D view of a shop counter photograph, with depth',
+    visualLabel: 'Decorative 3D view of a stand-in photograph of a shop counter, with depth. It is not a photograph of the shop.',
   },
 
   about: {
     eyebrow: 'About Chovu Chovu Brothers Ltd',
     title: 'A shop for everyday shopping in Luanshya.',
     paragraphs: [
-      'Chovu Chovu Brothers Ltd is a retail shop in Luanshya, Copperbelt Province, Zambia. It is a place to walk the shop floor, see products up close and choose what you need.',
-      'Not sure whether we have something? Send a short enquiry and our team will reply with the details you need before you make the trip.',
+      'Chovu Chovu Brothers Ltd is a retail shop in Luanshya, Copperbelt Province, Zambia. It is a place to walk the shop floor, look at what is on display and ask about anything you need.',
+      'Not sure whether we have something? Send a short enquiry before you make the trip.',
     ],
-    points: ['Browse the shop floor in person', 'Ask about products before you visit', 'Direct answers from our team'],
-    imageCaption: 'Our shop and team',
+    points: ['Browse the shop in person', 'Ask about products before you visit', 'Contact details are listed under Visit'],
   },
 
   categories: {
@@ -47,7 +46,7 @@ export const copy = {
   featured: {
     eyebrow: 'Featured products',
     title: 'Featured products',
-    lead: 'A selection of products from the shop. Sizes, prices and availability are confirmed when you enquire or visit.',
+    lead: 'Featured products will be listed here once they are confirmed. Ask about availability, sizes and prices before you visit.',
     cta: 'Enquire about this product',
     visualLabel: 'Decorative 3D view of placeholder packaging models on a display base. They are not products for sale.',
     stageNote: 'Placeholder 3D packaging, shown for layout only. These are not products for sale.',
@@ -55,10 +54,10 @@ export const copy = {
 
   scale: {
     eyebrow: 'In the shop',
-    title: 'Products displayed so you can see, compare and choose.',
-    lead: 'Shelves and displays are arranged for browsing, so you can find what you came for and take a closer look before you buy.',
-    points: ['Products on open shelves', 'Displays arranged for browsing', 'Help from our team on the shop floor'],
-    visualLabel: 'Decorative 3D view of shop shelving with products on display',
+    title: 'Look around the shop before you choose.',
+    lead: 'Walk the shop floor, take a closer look and ask us about anything you are unsure of before you buy.',
+    points: ['Browse the shop floor in person', 'Ask about a product before you visit', 'Contact us before you make the trip'],
+    visualLabel: 'Decorative 3D view of a stand-in photograph of stacked canned goods. It is not a photograph of the shop.',
   },
 
   why: {
@@ -69,22 +68,22 @@ export const copy = {
       {
         icon: 'box',
         title: 'A shop to browse',
-        text: 'Room to walk the shop floor, with products set out so you can see them and compare at your own pace.',
+        text: 'Room to walk the shop floor and look at what is on display, at your own pace.',
       },
       {
         icon: 'repeat',
-        title: 'Familiar, easy to return to',
-        text: 'Come back as often as you need. Your favourite products are easy to find on the shelves.',
+        title: 'Visit at your own pace',
+        text: 'Come in when it suits you. Ask us about anything you cannot find.',
       },
       {
         icon: 'quote',
         title: 'Clear enquiries',
-        text: 'Send your question once. We reply with the answer and the next steps.',
+        text: 'Send one enquiry with the details we need: the product, the quantity and your location.',
       },
       {
         icon: 'shield',
-        title: 'Friendly, professional service',
-        text: 'Courteous help from our team, from your first question to your purchase.',
+        title: 'Ask before you visit',
+        text: 'Contact us with questions about a product before you make the trip.',
       },
     ],
   },
@@ -92,7 +91,7 @@ export const copy = {
   enquiry: {
     eyebrow: 'Enquiry',
     title: 'Send us an enquiry',
-    lead: 'Tell us what you are looking for. The product, the quantity and your location help us reply faster.',
+    lead: 'Tell us what you are looking for. The product, the quantity and your location help us respond to your enquiry.',
     includeTitle: 'What to include',
     include: [
       'The product or category you are looking for',
@@ -103,7 +102,9 @@ export const copy = {
     submit: 'Send enquiry',
     sending: 'Sending…',
     productPlaceholderOption: 'Not sure yet',
-    successWithEndpoint: 'Thank you. Your enquiry has been sent and we will be in touch.',
+    successWithEndpoint: 'Thank you. Your enquiry has been sent.',
+    notConnected:
+      'Online enquiries are not connected yet. This form is disabled until the shop confirms how enquiries are received, so nothing you type here is sent.',
     successWithEmail:
       'Your email app should open with the enquiry filled in. If it does not, email us directly at the address in the contact details.',
     errorGeneric: 'Something went wrong while sending your enquiry. Please try again or contact us directly.',
@@ -121,7 +122,7 @@ export const copy = {
     placeholders: {
       name: 'Your name',
       company: 'Company name, if applicable',
-      email: 'name@example.com',
+      email: 'Your email address',
       phone: 'Phone or WhatsApp number',
       quantity: 'For example: 2 units',
       location: 'Town or area',
@@ -147,7 +148,6 @@ export const copy = {
       whatsapp: 'WhatsApp',
       hours: 'Opening hours',
     },
-    imageCaption: 'Chovu Chovu Brothers Ltd, Luanshya',
   },
 
   footer: {

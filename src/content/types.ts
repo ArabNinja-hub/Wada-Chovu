@@ -24,6 +24,9 @@ export interface ImageAsset {
   placeholder?: boolean;
   /** CSS object-position used when cropping, e.g. "50% 30%". */
   position?: string;
+  /** Where a stand-in photograph came from, and the licence that allows publishing it. */
+  source?: string;
+  license?: string;
   /** Maintainer note. Never rendered. */
   note?: string;
 }
@@ -61,6 +64,8 @@ export interface TextureAsset {
   /** Path under /public. Used as a surface texture on 3D objects. */
   src: string;
   placeholder?: boolean;
+  source?: string;
+  license?: string;
   note?: string;
 }
 

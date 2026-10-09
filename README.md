@@ -134,7 +134,8 @@ The stage also watches real frame times. If the median frame rate drops below ab
 
 **Enquiry form.** Validation runs in the browser, and each field has an accessible error message. A honeypot field catches most bots. Submission has two modes, chosen in `src/content/site.ts`:
 - `enquiry.endpoint` set to an HTTPS URL: the enquiry is sent there as JSON.
-- `enquiry.endpoint` empty (the default): the visitor's email app opens with the enquiry filled in, addressed to `enquiry.emailTo`. No server is needed.
+- `enquiry.endpoint` empty and `enquiry.emailTo` set to a real address: the visitor's email app opens with the enquiry filled in. No server is needed.
+- Neither set (the default now): the form is disabled and shows a notice. Nothing is sent. Placeholder domains such as `example.com` are rejected, both for the email address and for the endpoint host, and the deploy guard fails the build if any built `mailto:` link points at one.
 
 **Accessibility.** Semantic landmarks, a single `h1`, a skip link, visible focus styles, labelled form fields, and status messages in live regions. The 3D canvas is hidden from assistive technology, and each 3D slot is labelled with a short description. Without JavaScript, the navigation links are shown in the page, and the enquiry form uses the browser's own validation and opens the visitor's email app (a `mailto:` submission). That path has been checked for markup, not in a particular mail client.
 
@@ -169,6 +170,10 @@ Asset-agnosticism was verified in the browser against the dev server with a temp
 
 ---
 
+## Deployment
+
+GitHub Pages is set to build from the workflow (`.github/workflows/static.yml`). The workflow runs only on pushes to `main`, so this branch is **not deployed** until it is merged. The workflow runs `npm run build`, then `scripts/verify-dist.mjs`, and uploads `dist/`. The site is served at `https://arabninja-hub.github.io/Wada-Chovu/`, so every asset URL carries the `/Wada-Chovu/` base. The guard checks `href`, `src` and `srcset`, and the runtime URLs for photos, depth maps and models use `publicAssetUrl`.
+
 ## Before launch
 
 Items that need an owner's decision or real information:
@@ -178,6 +183,6 @@ Items that need an owner's decision or real information:
 3. **Production URL** (`site.url`), used for canonical links, social previews and structured data.
 4. **Enquiry handling.** Choose an endpoint, or confirm the email address that receives enquiries.
 5. **Privacy notice.** The enquiry form collects personal data. Add a privacy notice and link it from the form before launch.
-6. **Copy.** Confirm or rewrite the wording in `src/content/copy.ts`, for example the statements about browsing the shop floor, friendly service and clear enquiries.
+6. **Copy.** Confirm or rewrite the wording in `src/content/copy.ts`. Product availability, shop-floor help, reply times and the privacy statement "We only use your details to respond to your enquiry" need the owner's confirmation.
 7. **Photography and models.** See the content guide.
 8. **Favicon.** Replace the placeholder mark with the official icon when it is available.

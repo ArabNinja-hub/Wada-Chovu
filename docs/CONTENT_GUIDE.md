@@ -82,10 +82,14 @@ Entries are in `src/content/products.ts`.
 
 ## 6. Enquiry form
 
-The form is in `src/content/site.ts` under `enquiry`.
+The form is in `src/content/site.ts` under `enquiry`. It sends enquiries in one of three ways, and it never falls back to a placeholder address:
 
-- **No endpoint (default):** when a visitor submits, their email app opens with the enquiry filled in, addressed to `emailTo`. Nothing is stored on a server.
-- **With an endpoint:** the form sends a JSON `POST` to `endpoint` with these fields: `name`, `company`, `email`, `phone`, `product`, `quantity`, `location`, `message`, `page` and `submittedAt`. Any service that accepts JSON will work, and so will a small API you run yourself. The endpoint must allow CORS from your site's origin if it is on a different domain.
+- **Endpoint:** `enquiry.endpoint` is a valid `https://` URL on a real domain. The form sends a JSON `POST` there.
+- **Email:** `enquiry.endpoint` is empty and `enquiry.emailTo` is a real address (not `example.com`, `example.net`, `example.org`, `.test`, `.invalid`, `.localhost`). The visitor's email app opens with the enquiry filled in. Nothing is stored on a server.
+- **Not connected (the default now):** both are empty or reserved. The form is disabled, a notice says enquiries are not connected, and nothing is sent. The build prints a warning until one of the other two is set. `npm run build` does not fail for this, so the site can still deploy while contact details are confirmed.
+
+The rules are in `isUsableEmail`, `isUsableEndpoint` and `enquiryChannel` in `site.ts`. The deploy guard (`scripts/verify-dist.mjs`) fails the build if any `mailto:` link in the output points at a reserved domain.
+- **Endpoint:** the form sends a JSON `POST` to `endpoint` with these fields: `name`, `company`, `email`, `phone`, `product`, `quantity`, `location`, `message`, `page` and `submittedAt`. Any service that accepts JSON will work, and so will a small API you run yourself. The endpoint must allow CORS from your site's origin if it is on a different domain.
 
 Before launch, add a link to a privacy notice from the form. The form collects personal data.
 
@@ -98,6 +102,7 @@ All visitor-facing text is in `src/content/copy.ts`, grouped by section. Edit it
 Guidance for the copy:
 - Use plain, factual sentences. Avoid superlatives you cannot back up.
 - Do not add years of trading, customer counts, certifications, delivery times, prices or capacity unless they are confirmed.
+- Do not promise a reply time, service levels, product availability, shop-floor help or stock that has not been confirmed. The copy says "ask us" rather than "we will have it".
 - The wording in "Why choose us" and "In the shop" describes how the shop works, not measured results. Keep it that way unless figures are available.
 
 ---
@@ -106,15 +111,18 @@ Guidance for the copy:
 
 Every photograph currently in the repository is a stand-in with a licence recorded in
 `src/content/assets.ts` (`source`, `license`) and in `docs/PHOTO_PIPELINE.md`. Replace each
-one with the shop's own photographs. The alt text of each stand-in says so. The placeholder
-badge stays visible until `placeholder: true` is removed.
+one with the shop's own photographs. The alt text of each stand-in says it is not a photograph
+of the shop. The placeholder badge stays visible until `placeholder: true` is removed. The
+deploy guard fails the build if a photo entry is missing `placeholder: true`, `source` or `license`.
+No stand-in may show another business's name or signage.
 
 ## 9. Checklist before publishing
 
 - [ ] Real photos replace all placeholder images (`placeholder` flags removed).
 - [ ] Contact details, address and hours confirmed (`site.ts`).
 - [ ] Legal name and production URL set.
-- [ ] Enquiry endpoint set, or the email address confirmed.
+- [ ] Enquiry endpoint set, or a real enquiry email confirmed (the form stays disabled until then).
+- [ ] Footer email and phone replaced (`contact.email`, `contact.phone`).
 - [ ] Privacy notice written and linked from the enquiry form.
 - [ ] Product and category text confirmed (`products.ts`, `copy.ts`).
 - [ ] `features.placeholderMarkers` set to `false`.

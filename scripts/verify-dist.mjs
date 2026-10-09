@@ -206,6 +206,70 @@ check(
   `SVG markup found in: ${svgMarkup.map(rel).join(', ')}`,
 );
 
+// 7. Enquiries, stand-in photographs and the business name -----------------------
+
+/** Every shipped HTML and JS file, read once for the text checks below. */
+const shippedText = shipped
+  .filter((file) => /\.(html|js)$/i.test(file))
+  .map((file) => readFileSync(file, 'utf8'))
+  .join('\n');
+
+// srcset values also need the Pages base (the URL checks above only cover href and src).
+const srcsetUrls = [...html.matchAll(/\bsrcset="([^"]*)"/gi)].flatMap((match) =>
+  match[1].split(',').map((entry) => entry.trim().split(/\s+/)[0]).filter(Boolean),
+);
+const badSrcset = srcsetUrls.filter((url) => url.startsWith('/') && !url.startsWith(PAGES_BASE));
+check(
+  badSrcset.length === 0,
+  `all ${srcsetUrls.length} srcset URLs carry the Pages base`,
+  `srcset URLs are missing the Pages base: ${badSrcset.join(', ')}`,
+);
+
+// Enquiries never go to a reserved example domain.
+const reservedMail = /mailto:[^"'\s<>]*@[^"'\s<>]*(?:example\.(?:com|net|org)|\.test|\.invalid|\.localhost)\b/i;
+check(
+  !reservedMail.test(shippedText),
+  'no mailto: link points at a reserved example domain',
+  'a mailto: link in the build points at a reserved example domain (example.com and similar); enquiries would go there',
+);
+
+// Without a real enquiry channel the form is disabled. This is a warning, not a failure,
+// so the site can deploy while the contact details are still being confirmed.
+if (html.includes('data-channel="unconfigured"')) {
+  console.warn(
+    '::warning::Enquiry form is NOT connected (no valid https endpoint and no real enquiry email in src/content/site.ts). The form is disabled and sends nothing.',
+  );
+} else {
+  console.log('  ok  enquiry form is connected (endpoint or real enquiry email)');
+}
+
+// Every stand-in photograph is marked as a placeholder and names its source and licence.
+const assetsSource = readFileSync(join(repoRoot, 'src/content/assets.ts'), 'utf8');
+const assetBlocks = [...assetsSource.matchAll(/^  '([\w.]+)': \{([\s\S]*?)^  \},/gm)];
+const photoBlocks = assetBlocks.filter(([, , body]) => /src: '\/media\/photos\//.test(body));
+const unmarked = photoBlocks.filter(([, key, body]) => !/placeholder: true/.test(body)).map(([, key]) => key);
+const unsourced = photoBlocks
+  .filter(([, , body]) => !(/source: /.test(body) && /license: /.test(body)))
+  .map(([, key]) => key);
+check(
+  photoBlocks.length > 0 && unmarked.length === 0,
+  `all ${photoBlocks.length} photo entries are marked placeholder: true (stand-ins)`,
+  `photo entries not marked placeholder: true: ${unmarked.join(', ') || 'none found'}`,
+);
+check(
+  photoBlocks.length > 0 && unsourced.length === 0,
+  'every photo entry names its source and licence',
+  `photo entries without source and licence: ${unsourced.join(', ')}`,
+);
+
+// The business is called Chovu Chovu Brothers Ltd. The old name must not appear as visible text.
+const oldName = /wada\s+chovu/i;
+check(
+  !oldName.test(html.replace(/<[^>]*>/g, ' ')),
+  'the old business name does not appear in visible text',
+  'the old business name "Wada Chovu" appears in the visible page text',
+);
+
 if (failures.length > 0) {
   console.error('');
   for (const message of failures) console.error(`::error::${message}`);

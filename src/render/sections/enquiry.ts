@@ -1,9 +1,10 @@
 import { categories, featuredProducts } from '../../content/products.ts';
 import { copy } from '../../content/copy.ts';
-import { site } from '../../content/site.ts';
+import { enquiryChannel, site } from '../../content/site.ts';
 import { attrs, esc } from '../html.ts';
 import { icon } from '../icons.ts';
 import { placeholderText, sectionHead } from '../ui.ts';
+import { placeholderBadge as placeholderBadgeHtml } from '../media.ts';
 
 type FieldKind = 'text' | 'email' | 'tel';
 
@@ -44,16 +45,24 @@ function productOptions(): string {
 }
 
 /**
- * Without JavaScript the form cannot send itself, so it submits to a mailto: link. The browser
- * then opens the visitor's email app with the fields in the message body.
+ * Without JavaScript the form cannot send itself. In email mode it submits to a mailto: link, so
+ * the browser opens the visitor's email app with the fields in the body. In any other mode the
+ * form has no action: it is either disabled, or sent by the script to the endpoint. method="dialog"
+ * stops a script-less submit from putting the visitor's details into the page URL.
  */
-function enquiryMailto(): string {
-  return `mailto:${encodeURIComponent(site.enquiry.emailTo)}?subject=${encodeURIComponent(site.enquiry.subject)}`;
+function formAttributes(channel: ReturnType<typeof enquiryChannel>): string {
+  if (channel === 'email') {
+    const mailto = `mailto:${encodeURIComponent(site.enquiry.emailTo)}?subject=${encodeURIComponent(site.enquiry.subject)}`;
+    return `action="${esc(mailto)}" method="post" enctype="text/plain"`;
+  }
+  return 'method="dialog"';
 }
 
 export function renderEnquiry(): string {
   const f = copy.enquiry.fields;
   const p = copy.enquiry.placeholders;
+  const channel = enquiryChannel();
+  const unconfigured = channel === 'unconfigured';
   const include = copy.enquiry.include.map((item) => `<li>${icon('check', 'check-list__icon')}<span>${esc(item)}</span></li>`).join('');
 
   return `
@@ -78,7 +87,9 @@ export function renderEnquiry(): string {
     </div>
 
     <div class="enquiry__card" data-reveal style="--d: 120ms">
-      <form class="enquiry-form" id="enquiry-form" data-enquiry-form action="${esc(enquiryMailto())}" method="post" enctype="text/plain">
+      ${unconfigured ? `<div class="form-notice" role="note" data-channel-notice>${site.features.placeholderMarkers ? placeholderBadgeHtml() : ''}<p>${esc(copy.enquiry.notConnected)}</p></div>` : ''}
+      <form class="enquiry-form" id="enquiry-form" data-enquiry-form data-channel="${channel}" ${formAttributes(channel)}>
+        <fieldset class="enquiry-form__fields"${unconfigured ? ' disabled' : ''}>
         <div class="form-grid">
           ${inputField({ name: 'name', label: f.name, placeholder: p.name, required: true, autocomplete: 'name' })}
           ${inputField({ name: 'company', label: f.company, placeholder: p.company, autocomplete: 'organization' })}
@@ -101,8 +112,10 @@ export function renderEnquiry(): string {
           <label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
         </div>
 
+        </fieldset>
+
         <div class="form-actions">
-          <button class="btn btn--primary btn--submit" type="submit" data-submit>
+          <button class="btn btn--primary btn--submit" type="submit" data-submit${unconfigured ? ' disabled aria-disabled="true"' : ''}>
             <span data-submit-label>${esc(copy.enquiry.submit)}</span>${icon('arrow', 'btn__icon')}
           </button>
         </div>

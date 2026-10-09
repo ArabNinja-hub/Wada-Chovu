@@ -6,8 +6,8 @@ import type { MaterialLibrary } from './materials.ts';
 /**
  * Placeholder models, built in code.
  *
- * These stand in for the real Chovu Chovu Brothers Ltd products and fixtures until .glb
- * models are supplied. They are deliberately finished, neutral objects, not
+ * These stand in for generic packaging and display fixtures until real .glb models are supplied.
+ * They do not depict products sold by Chovu Chovu Brothers Ltd. They are deliberately finished, neutral objects, not
  * raw primitives: a product box, a glossy tin, a product pouch, a display plinth, and a
  * product-photo card. They share the palette and
  * lighting of the live scenes so the demo reads as one intentional shop set.

@@ -780,6 +780,41 @@ html:not(.js) .primary-nav__cta {
   display: none;
 }
 
+/* Shown above the form when enquiries are not connected. */
+.form-notice {
+  margin-bottom: 1rem;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--c-line, rgb(12 31 18 / 0.18));
+  background: var(--c-paper);
+  color: var(--c-ink-2);
+  font-size: 0.9375rem;
+}
+
+.form-notice p {
+  margin: 0;
+}
+
+.form-notice .ph-badge {
+  position: static;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+/* Disabled form: the fieldset adds no border or spacing of its own. */
+.enquiry-form__fields {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.enquiry-form__fields:disabled,
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .form-status {
   min-height: 1.5rem;
   margin-top: 1rem;
