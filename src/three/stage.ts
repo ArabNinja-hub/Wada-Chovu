@@ -4,6 +4,7 @@ import { lowerTier, type QualityProfile } from '../client/quality.ts';
 import type { StageSceneId } from '../content/types.ts';
 import { MaterialLibrary } from './materials.ts';
 import { ModelLibrary } from './models.ts';
+import { STAGE_UNAVAILABLE } from './stage-events.ts';
 import { SCENE_LOADERS } from './scenes/index.ts';
 import { TextureLibrary } from './textures.ts';
 import { clamp, damp } from './rig.ts';
@@ -138,8 +139,11 @@ class Stage {
     try {
       const factory = await SCENE_LOADERS[slot.id]();
       const context = this.ensureContext();
-      const handle = await factory(context, { el: slot.el });
-      if (!this.active) return;
+      const handle = await factory(context, { el: slot.el, requestFrame: () => this.requestFrame() });
+      if (!this.active) {
+        handle.dispose?.();
+        return;
+      }
       try {
         this.renderer?.compile(handle.scene, handle.camera);
       } catch {
@@ -150,6 +154,7 @@ class Stage {
     } catch (error) {
       slot.state = 'failed';
       console.warn(`3D scene "${slot.id}" could not start; showing its static image.`, error);
+      slot.el.dispatchEvent(new CustomEvent(STAGE_UNAVAILABLE, { bubbles: true }));
       if (!this.renderer) this.disable();
     }
     this.requestFrame();
@@ -213,7 +218,7 @@ class Stage {
   }
 
   private hasLiveSlot(): boolean {
-    return this.slots.some((slot) => slot.near && slot.state === 'ready');
+    return this.slots.some((slot) => slot.near && slot.state === 'ready' && (slot.handle?.needsFrame?.() ?? true));
   }
 
   private requestFrame(): void {
@@ -363,8 +368,10 @@ class Stage {
     this.reducedQuery.removeEventListener('change', this.onMotionChange);
     this.canvas.remove();
     for (const slot of this.slots) {
-      slot.el.classList.remove('is-3d');
+      slot.handle?.dispose?.();
       slot.handle = null;
+      slot.el.classList.remove('is-3d');
+      slot.el.dispatchEvent(new CustomEvent(STAGE_UNAVAILABLE, { bubbles: true }));
     }
     if (this.renderer) {
       this.renderer.dispose();

@@ -21,11 +21,13 @@
  */
 import type { AssetDefinition, ImageAsset, ModelAsset, PhotoAsset, TextureAsset } from './types.ts';
 
-// TODO before launch: replace this search page with the exact Pexels photo page for the image used.
+// Before launch: link each Pexels entry to the exact photo page, not the search page.
 const SOURCE_TINS = 'https://www.pexels.com/search/canned%20food/';
 const LICENSE_PEXELS = 'Pexels License (free to use; attribution not required)';
 const SOURCE_SHELVES = 'https://www.pexels.com/search/empty%20shelves/';
 const SOURCE_COUNTER = 'https://unsplash.com/photos/a-minimalist-shop-with-shelves-and-products-nzisN6dYiV8';
+const SOURCE_OWNER = 'Supplied by the business owner';
+const LICENSE_OWNER = 'unverified, supplied by owner';
 const LICENSE_UNSPLASH = 'Unsplash License (free to use; attribution not required)';
 
 export const ASSETS = {
@@ -47,6 +49,55 @@ export const ASSETS = {
     height: 64,
     alt: '',
     note: 'Raster icon cropped from the supplied logo. Replace with an official icon when available.',
+  },
+
+  // ---------------------------------------------------------------------------
+  // Product assembly section. Owner-supplied photographs, used at their real paths.
+  // Scene order is set by ASSEMBLY_IMAGE_KEYS below. Each is a flat photograph in 3D.
+  // ---------------------------------------------------------------------------
+  'assembly.bike': {
+    kind: 'image',
+    src: '/media/products/bike.jpeg',
+    width: 1080,
+    height: 1080,
+    alt: 'Five black bicycles standing side by side.',
+    placeholder: true,
+    source: SOURCE_OWNER,
+    license: LICENSE_OWNER,
+    note: 'Supplied by the business owner. Licence and right to publish are unverified. Replace with the owner\'s own photograph when confirmed.',
+  },
+  'assembly.stack': {
+    kind: 'image',
+    src: '/media/products/stack.jpeg',
+    width: 1080,
+    height: 601,
+    alt: 'Supermarket shelves stocked with drinks and snacks.',
+    placeholder: true,
+    source: SOURCE_OWNER,
+    license: LICENSE_OWNER,
+    note: 'Supplied by the business owner. Shows several third-party brands (drinks and snack packaging). Brand use and licence must be cleared before launch, or replaced with a neutral photograph.',
+  },
+  'assembly.water': {
+    kind: 'image',
+    src: '/media/products/water.jpeg',
+    width: 1080,
+    height: 1080,
+    alt: 'Drinks in bottles and cans, arranged on a white background.',
+    placeholder: true,
+    source: SOURCE_OWNER,
+    license: LICENSE_OWNER,
+    note: 'Supplied by the business owner. Shows several third-party drink brands. Brand use and licence must be cleared before launch, or replaced with a neutral photograph.',
+  },
+  'assembly.bicycles': {
+    kind: 'image',
+    src: '/media/products/bicycles.jpeg',
+    width: 1079,
+    height: 669,
+    alt: 'Silver and black city bicycles with coloured baskets on a rack.',
+    placeholder: true,
+    source: SOURCE_OWNER,
+    license: LICENSE_OWNER,
+    note: 'Supplied by the business owner. Licence and right to publish are unverified. Replace with the owner\'s own photograph when confirmed.',
   },
 
   // ---------------------------------------------------------------------------
@@ -253,6 +304,12 @@ export const ASSETS = {
     note: 'Flat product-photo card using texture.productCard. Use only for product imagery, not as a 3D object.',
   },
 } satisfies Record<string, AssetDefinition>;
+
+/**
+ * Photographs for the product assembly section, in the order the scene places them. The
+ * order is part of the layout, so change it only together with motion/assembly-plan.ts.
+ */
+export const ASSEMBLY_IMAGE_KEYS = ['assembly.bike', 'assembly.stack', 'assembly.water', 'assembly.bicycles'] as const satisfies readonly ImageKey[];
 
 /** Every asset key in the manifest. */
 export type AssetKey = keyof typeof ASSETS;

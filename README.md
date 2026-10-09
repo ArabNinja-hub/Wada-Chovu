@@ -34,6 +34,7 @@ Development only: append `?quality=high`, `?quality=medium` or `?quality=low` to
 | Hero | Welcome headline, calls to action, and a 3D product display on a shop counter in an arch that echoes the logo. |
 | About | The shop and what to expect, with a portrait image of the shop or team in an arch frame. |
 | Shop by category | Four category cards (placeholder content). Each card pre-selects its product in the enquiry form. |
+| Product assembly | Pinned, scroll-driven 3D section. Four photographs appear, move into a row, converge into a composed arrangement, then leave as the page scrolls on. Uses GSAP ScrollTrigger and a shared Three.js stage. Static grid when 3D is unavailable or reduced motion is on. |
 | Featured products | A small 3D display group, then four product cards (placeholder content). Each pre-selects its product too. |
 | In the shop | Dark section with 3D retail shelving and product displays. The camera moves with scrolling. |
 | Why choose us | Four value pillars. |

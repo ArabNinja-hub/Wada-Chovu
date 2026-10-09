@@ -500,3 +500,73 @@
     grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1.1fr);
   }
 }
+
+/* Product assembly --------------------------------------------------------- */
+
+/*
+ * Static (default): a normal section. The stage slot keeps a fixed ratio and the photographs
+ * sit in a grid, which is the fallback when 3D is unavailable or motion is reduced.
+ * Pinned (.is-pinned, set only when the 3D scene can run): the section reserves scroll
+ * distance, and the pin element stays on screen beneath the header while the scene plays.
+ */
+
+.assembly {
+  --assembly-distance: 320svh;
+  background: #ffffff;
+}
+
+.assembly__pin {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2.5vh, 1.5rem);
+}
+
+.assembly__head {
+  flex: none;
+  max-width: 44rem;
+}
+
+.assembly .assembly__slot.stage-slot {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+}
+
+.assembly__fallback {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.5vw, 1rem);
+  padding: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.assembly__fallback img {
+  min-height: 0;
+  object-fit: contain;
+}
+
+@media (min-width: 900px) {
+  .assembly .assembly__slot.stage-slot {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+.assembly.is-pinned {
+  height: calc(100svh + var(--assembly-distance));
+  padding-block: 0;
+}
+
+.assembly.is-pinned .assembly__pin {
+  height: 100svh;
+  /* The header is fixed above this content, so the content starts below it. */
+  padding-top: calc(var(--header-h) + clamp(0.75rem, 2.5vh, 1.5rem));
+  padding-bottom: clamp(0.75rem, 2.5vh, 1.5rem);
+  background: #ffffff;
+}
+
+.assembly.is-pinned .assembly .assembly__slot.stage-slot,
+.assembly.is-pinned .assembly__slot.stage-slot {
+  flex: 1 1 auto;
+  min-height: 0;
+  aspect-ratio: auto;
+}

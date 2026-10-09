@@ -12,4 +12,5 @@ export const SCENE_LOADERS: Record<StageSceneId, () => Promise<SceneFactory>> = 
   hero: () => import('./photo.ts').then((m) => m.createPhotoScene),
   scale: () => import('./photo.ts').then((m) => m.createPhotoScene),
   featured: () => import('./featured.ts').then((m) => m.createFeaturedScene),
+  assembly: () => import('./assembly.ts').then((m) => m.createAssemblyScene),
 };

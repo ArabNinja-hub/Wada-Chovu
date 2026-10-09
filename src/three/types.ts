@@ -29,11 +29,20 @@ export interface SceneHandle {
   camera: THREE.PerspectiveCamera;
   /** Advances the scene for one frame. Called only while the slot is near the viewport. */
   update(frame: FrameState): void;
+  /**
+   * True while the scene needs continuous frames, for example while it is pinned to the
+   * scroll. Scenes without it are drawn on demand, on scroll, resize and load.
+   */
+  needsFrame?(): boolean;
+  /** Releases timelines, scroll triggers, listeners and GPU resources the scene created. */
+  dispose?(): void;
 }
 
 /** The stage slot a scene is mounted into. Scenes read their configuration from its attributes. */
 export interface SceneSlot {
   el: HTMLElement;
+  /** Asks the stage to draw a frame, for scenes whose state changes outside the render loop. */
+  requestFrame(): void;
 }
 
 /** Shared services provided to every scene factory. */

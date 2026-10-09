@@ -94,4 +94,4 @@ export interface ModelAsset {
 export type AssetDefinition = ImageAsset | PhotoAsset | TextureAsset | ModelAsset;
 
 /** Identifiers for the 3D scenes that can be mounted into a stage slot. */
-export type StageSceneId = 'hero' | 'scale' | 'featured';
+export type StageSceneId = 'hero' | 'scale' | 'featured' | 'assembly';

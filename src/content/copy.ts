@@ -52,6 +52,13 @@ export const copy = {
     stageNote: 'Placeholder 3D packaging, shown for layout only. These are not products for sale.',
   },
 
+  assembly: {
+    eyebrow: 'Showcase',
+    title: 'Pieces brought together',
+    lead: 'Stand-in photographs, arranged as you scroll. They are shown for layout only and do not describe what we sell.',
+    visualLabel: 'Stand-in photographs of bicycles, drinks and shelved goods. They move into one arrangement as you scroll.',
+  },
+
   scale: {
     eyebrow: 'In the shop',
     title: 'Look around the shop before you choose.',

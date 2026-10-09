@@ -107,6 +107,18 @@ Guidance for the copy:
 
 ---
 
+## 7b. Product assembly photographs
+
+The pinned section in `src/render/sections/assembly.ts` uses four photographs listed in
+`ASSEMBLY_IMAGE_KEYS` (`src/content/assets.ts`). To change one, replace its file in
+`public/media/products/` and keep the same name, or change its `src` entry. To add or remove one,
+update the keys and the layout in `src/motion/assembly-plan.ts` together, because the layout
+places the photographs by position in that list.
+
+The four photographs are owner uploads. Their licence and right to publish are unverified, and
+`stack.jpeg` and `water.jpeg` show third-party drink and snack brands. Clear the brands and
+licence before launch, or replace those two with neutral photographs.
+
 ## 8. Stand-in artwork and credits
 
 Every photograph currently in the repository is a stand-in with a licence recorded in

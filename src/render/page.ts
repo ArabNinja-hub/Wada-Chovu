@@ -12,6 +12,7 @@ import { renderHeader } from './sections/header.ts';
 import { renderHero } from './sections/hero.ts';
 import { renderAbout } from './sections/about.ts';
 import { renderCategories } from './sections/categories.ts';
+import { renderAssembly } from './sections/assembly.ts';
 import { renderFeatured } from './sections/featured.ts';
 import { renderScale } from './sections/scale.ts';
 import { renderWhy } from './sections/why.ts';
@@ -26,6 +27,7 @@ export function renderPage(year: number = new Date().getFullYear()): string {
     renderHero(),
     renderAbout(),
     renderCategories(),
+    renderAssembly(),
     renderFeatured(),
     renderScale(),
     renderWhy(),
