@@ -36,12 +36,13 @@ export interface TextureAsset {
   note?: string;
 }
 
-/** Placeholder geometry that the 3D system can build in code. */
 /**
  * Placeholder geometry the 3D system can build in code. `card` is a product-photo panel: it
  * lets a scene show product imagery in place of a 3D object, with no scene-code change.
+ * `counter` is a shop display counter, `shelf` is retail gondola shelving and `pouch` is a
+ * product bag.
  */
-export type ProceduralBuilder = 'carton' | 'pallet' | 'tin' | 'sack' | 'rack' | 'plinth' | 'card';
+export type ProceduralBuilder = 'carton' | 'counter' | 'tin' | 'pouch' | 'shelf' | 'plinth' | 'card';
 
 export interface ModelAsset {
   kind: 'model';

@@ -5,7 +5,7 @@ import { renderStageSlot } from '../media.ts';
 import { eyebrow } from '../ui.ts';
 
 /**
- * Dark band with the warehouse 3D scene. The copy sits above the stage, so the
+ * Dark band with the shop-floor 3D scene. The copy sits above the stage, so the
  * 3D composition never overlaps text.
  */
 export function renderScale(): string {

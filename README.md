@@ -1,8 +1,8 @@
-# Wada Chovu Wholesale
+# Chovu Chovu Brothers Ltd
 
-The website for **Wada Chovu Wholesale**. It is a static, prerendered site: the complete page is in the HTML before any JavaScript runs. Optional Three.js scenes add motion on capable devices, and the page is fully usable without them.
+The website for **Chovu Chovu Brothers Ltd**, a large retail shop in Luanshya, Copperbelt Province, Zambia. It is a static, prerendered site: the complete page is in the HTML before any JavaScript runs. Optional Three.js scenes add motion on capable devices, and the page is fully usable without them.
 
-Brand reference: the supplied logo, `public/brand/wada-chovu-logo.jpeg`. The palette in `src/styles/tokens.css` is sampled from it.
+Brand reference: the supplied logo, `public/brand/wada-chovu-logo.jpeg`, used unaltered. The palette in `src/styles/tokens.css` is drawn from it. **Note:** the artwork itself reads "WADA CHOVU SERVICES LTD"; see *Open questions* below.
 
 > **Status:** structure, design system, 3D system and enquiry form are complete. Photos, 3D models, business contact details and product information are still placeholders. See [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md) for how to replace them.
 
@@ -30,15 +30,15 @@ Development only: append `?quality=high`, `?quality=medium` or `?quality=low` to
 
 | Section | Purpose |
 | --- | --- |
-| Header | Logo, section links and a "Wholesale enquiry" call to action. A full-height menu sheet on small screens. |
-| Hero | Headline, calls to action, and a 3D stack of cartons and containers in an arch that echoes the logo. |
-| About | Who the business is for, with a portrait image in an arch frame. |
-| Product categories | Four category cards (placeholder content). Each card pre-selects its product in the enquiry form. |
+| Header | Logo, section links and a "Send an enquiry" call to action. A full-height menu sheet on small screens. |
+| Hero | Welcome headline, calls to action, and a 3D product display on a shop counter in an arch that echoes the logo. |
+| About | The shop and what to expect, with a portrait image of the shop or team in an arch frame. |
+| Shop by category | Four category cards (placeholder content). Each card pre-selects its product in the enquiry form. |
 | Featured products | A small 3D display group, then four product cards (placeholder content). Each pre-selects its product too. |
-| Warehouse band | Dark section with a 3D rack and pallets. The camera moves with scrolling. |
+| In the shop | Dark section with 3D retail shelving and product displays. The camera moves with scrolling. |
 | Why choose us | Four value pillars. |
-| Enquiry | Wholesale enquiry form with validation, a honeypot field, and submission by email app or JSON endpoint. |
-| Location and contact | Address, phone, email and hours (placeholders) and a location image. |
+| Enquiry | Enquiry form with validation, a honeypot field, and submission by email app or JSON endpoint. |
+| Visit us | Luanshya location (confirmed), street address, phone, email and hours (placeholders) and a shop exterior image. |
 | Footer | Logo, navigation, contact summary, legal line and back to top. |
 
 ---
@@ -70,11 +70,11 @@ src/
     stage.ts            One shared WebGL canvas that draws every 3D slot
     models.ts           Model loader: .glb/.gltf when configured, placeholder geometry otherwise
     layout.ts           Measured placement: stack, grid, ring, fit-to-shelf, frame-content
-    placeholders.ts     Placeholder models (carton, pallet, tin, sack, rack, plinth, card)
+    placeholders.ts     Placeholder models (carton, counter, tin, pouch, shelf, plinth, card)
     materials.ts        Shared materials and geometry
     textures.ts         Texture loader with fallbacks
     rig.ts              Animation helpers (damping, bob) and camera fitting
-    scenes/             Hero, warehouse band and featured scenes
+    scenes/             Hero, shop-floor and featured scenes
   styles/               tokens.css, base.css, components.css, sections.css, motion.css
 public/
   brand/                The supplied logo and the favicon
@@ -140,7 +140,7 @@ The stage also watches real frame times. If the median frame rate drops below ab
 
 Anything the business has not confirmed is a clearly marked placeholder. A "Placeholder" badge appears on images, and an orange highlight marks text. Both are controlled by `features.placeholderMarkers` in `src/content/site.ts`. Set it to `false` once the content is final.
 
-Placeholders include: the company address, phone, email and hours; product category and product names, pack sizes and descriptions; all photography; and the favicon, a simplified mark drawn from the logo. Nothing on the page states a year of trading, customer numbers, certifications, prices, delivery times or capacity. Add those only once they are confirmed.
+Placeholders include: the street address, phone, email and hours; product category and product names, pack sizes and descriptions; all photography; and the favicon, a simplified mark drawn from the logo. Nothing on the page states a year of trading, customer numbers, certifications, prices, delivery times or capacity. Add those only once they are confirmed.
 
 ---
 
@@ -152,7 +152,7 @@ Run against the production build in headless Chromium, at 360, 390, 768, 1024 an
 - No horizontal overflow at any width.
 - Cumulative layout shift of 0 on load at every width.
 - No console errors, page errors or failed requests on load.
-- The hero 3D scene starts on load. The featured and warehouse scenes start when they are scrolled into view.
+- The hero 3D scene starts on load. The featured and shop-floor scenes start when they are scrolled into view.
 - Reduced motion: no animation frames are requested while the page is idle, and reveal animations are not used.
 - No JavaScript: all content and the navigation are present, and the enquiry form submits to the visitor's email app.
 - 3D blocked at the network level: the page stays complete with the fallback art, and one warning is logged.
@@ -169,11 +169,11 @@ Asset-agnosticism was verified in the browser against the dev server with a temp
 
 Items that need an owner's decision or real information:
 
-1. **Legal name.** The logo reads "Wada Chovu Services Ltd" and the brief says "Wholesale". The footer uses the logo name. Confirm which name the legal line should show.
+1. **Logo artwork.** The supplied logo file (`public/brand/wada-chovu-logo.jpeg`) reads "WADA CHOVU SERVICES LTD". The site name, alt text and structured data use "Chovu Chovu Brothers Ltd", but the logo image still shows the old name in the header, footer and social preview. Supply the Chovu Chovu Brothers Ltd logo and replace the file (the path can stay the same).
 2. **Contact details, address and opening hours** (`src/content/site.ts`).
 3. **Production URL** (`site.url`), used for canonical links, social previews and structured data.
 4. **Enquiry handling.** Choose an endpoint, or confirm the email address that receives enquiries.
 5. **Privacy notice.** The enquiry form collects personal data. Add a privacy notice and link it from the form before launch.
-6. **Copy.** Confirm or rewrite the operational wording in `src/content/copy.ts`, for example the statements about bulk, repeat supply and clear enquiries.
+6. **Copy.** Confirm or rewrite the wording in `src/content/copy.ts`, for example the statements about browsing the shop floor, friendly service and clear enquiries.
 7. **Photography and models.** See the content guide.
 8. **Favicon.** Replace the placeholder mark with the official icon when it is available.

@@ -3,24 +3,26 @@ import type { FrameState, SceneFactory, SceneHandle } from '../types.ts';
 import { addGroundPool, addLighting, castShadows, contactShadowFor, seededRandom } from './common.ts';
 import { bob, damp, frameCamera } from '../rig.ts';
 import { arrangeGrid, boundsOf, fitLargest, fitWithin, frameContent, restBaseAt } from '../layout.ts';
+import { SHELF_DECK_FRACTIONS, SHELF_DECK_TOP, SHELF_HEADER_H } from '../placeholders.ts';
+import type { ModelKey } from '../../content/assets.ts';
 
 /**
- * Scale scene: a warehouse rack filled with cartons and two loaded pallets in front. Cartons
- * are sized to fit each shelf bay, pallet stacks are measured from real heights, and the
- * camera frames the measured content and slides with scroll. Swapping any model keeps it all
- * correct.
+ * Shop-floor scene: a retail gondola filled with products, and two display counters in front
+ * with neat product stacks. Products are sized to fit each shelf bay and rest on the top of
+ * each deck. The camera frames the measured content and slides with scroll. Swapping any
+ * model keeps it all correct.
  */
 export const createScaleScene: SceneFactory = async (ctx) => {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
 
   addLighting(scene, ctx, {
-    key: { color: 0xffe9c9, intensity: 2.5, position: [-4, 6, 6] },
-    fill: { color: 0xc9e6ff, intensity: 0.6, position: [5, 2, 4] },
-    rim: { color: 0x06fc07, intensity: 1.4, position: [4, 5, -6] },
-    hemi: { sky: 0xdfeee2, ground: 0x0a2413, intensity: 0.9 },
+    key: { color: 0xfff1de, intensity: 2.5, position: [-4, 6, 6] },
+    fill: { color: 0xe6f0ff, intensity: 0.6, position: [5, 2, 4] },
+    rim: { color: 0x06fc07, intensity: 1.2, position: [4, 5, -6] },
+    hemi: { sky: 0xf4f8f1, ground: 0x0a2413, intensity: 0.95 },
     shadowExtent: 3,
-    environmentIntensity: 0.45,
+    environmentIntensity: 0.5,
   });
 
   const ground = new THREE.Group();
@@ -31,92 +33,95 @@ export const createScaleScene: SceneFactory = async (ctx) => {
   scene.add(root);
   const random = seededRandom(42);
 
-  // Rack.
-  const rack = await ctx.models.instance('model.rack');
-  root.add(rack);
-  const rb = boundsOf(rack);
-  const rackW = rb.size.x;
-  const rackH = rb.size.y;
-  const rackD = rb.size.z;
-  const rackMinY = rb.min.y;
-  const rackTop = rb.max.y;
-  const rackCx = rb.center.x;
-  const rackCz = rb.center.z;
+  // Products for the shelves: a mix of boxes, tins and pouches, chosen at random per slot.
+  const productKeys: ModelKey[] = ['model.carton', 'model.carton', 'model.tin', 'model.pouch'];
+  const pickProduct = (): ModelKey => productKeys[Math.floor(random() * productKeys.length)];
 
-  // Fill the shelves. Cartons are scaled to fit each bay (width, depth and shelf gap), so any
-  // carton model fills the rack without clipping or floating.
-  const shelfFractions = [0.21, 0.45, 0.69, 0.93];
-  const shelfTops = shelfFractions.map((f) => rackMinY + f * rackH);
+  // Gondola shelving.
+  const shelf = await ctx.models.instance('model.shelf');
+  root.add(shelf);
+  const sb = boundsOf(shelf);
+  const shelfW = sb.size.x;
+  const shelfH = sb.size.y;
+  const shelfD = sb.size.z;
+  const shelfMinY = sb.min.y;
+  const shelfCx = sb.center.x;
+  const shelfCz = sb.center.z;
+  // The header sign sits above the top deck, so the top bay stops below it.
+  const shelfUsableTop = sb.max.y - SHELF_HEADER_H;
+
+  // Fill the shelves. Products are scaled to fit each bay (width, depth and shelf gap), so any
+  // product model fills the shelves without clipping or floating.
+  const deckTops = SHELF_DECK_FRACTIONS.map((f) => shelfMinY + f * shelfH);
   const bays = 3;
-  const bayW = (rackW * 0.92) / bays;
+  const bayW = (shelfW * 0.92) / bays;
   const shelfGap = 0.02;
 
-  for (let s = 0; s < shelfTops.length; s++) {
-    const shelfY = shelfTops[s];
-    const gapH = s < shelfTops.length - 1 ? shelfTops[s + 1] - shelfY : rackTop - shelfY;
+  for (let s = 0; s < deckTops.length; s++) {
+    const deckY = deckTops[s] + SHELF_DECK_TOP;
+    const gapH = (s < deckTops.length - 1 ? deckTops[s + 1] : shelfUsableTop) - deckY;
     const cellH = gapH * 0.86;
-    const cellD = rackD * 0.78;
+    const cellD = shelfD * 0.78;
     const cellW = bayW * 0.46;
     for (let b = 0; b < bays; b++) {
-      const bayCx = rackCx + (b - (bays - 1) / 2) * bayW;
+      const bayCx = shelfCx + (b - (bays - 1) / 2) * bayW;
       for (let j = 0; j < 2; j++) {
-        if (random() < 0.2) continue; // a few gaps, so the rack looks used
-        const carton = await ctx.models.instance('model.carton');
-        fitWithin(carton, { x: cellW, y: cellH, z: cellD });
-        carton.rotation.y = (random() - 0.5) * 0.12;
-        root.add(carton);
-        const cw = boundsOf(carton).size.x;
-        carton.position.x = bayCx + (j - 0.5) * (cw + shelfGap);
-        carton.position.z = rackCz + (random() - 0.5) * 0.04;
-        restBaseAt(carton, shelfY);
+        if (random() < 0.2) continue; // a few gaps, so the shelves look well stocked, not full
+        const product = await ctx.models.instance(pickProduct());
+        fitWithin(product, { x: cellW, y: cellH, z: cellD });
+        product.rotation.y = (random() - 0.5) * 0.12;
+        root.add(product);
+        const pw = boundsOf(product).size.x;
+        product.position.x = bayCx + (j - 0.5) * (pw + shelfGap);
+        product.position.z = shelfCz + (random() - 0.5) * 0.04;
+        restBaseAt(product, deckY);
       }
     }
   }
 
-  // Foreground pallets, each with a measured stack of cartons.
-  const palletGap = 0.15;
-  const palletTargetW = rackW * 0.4;
-  const palletSpots = [-1, 1];
-  for (const side of palletSpots) {
-    const pallet = await ctx.models.instance('model.pallet');
-    fitLargest(pallet, palletTargetW);
-    root.add(pallet);
-    restBaseAt(pallet, 0);
-    const pw = boundsOf(pallet).size.x;
-    const pd = boundsOf(pallet).size.z;
-    pallet.position.x = side * (rackW / 2 + pw / 2 + palletGap);
-    pallet.position.z = rackD * 0.35;
-    const palletTop = boundsOf(pallet).max.y;
+  // Display counters in front of the shelving, each with a neat stack of product boxes.
+  const counterGap = 0.15;
+  const counterTargetW = shelfW * 0.4;
+  for (const side of [-1, 1]) {
+    const counter = await ctx.models.instance('model.counter');
+    fitLargest(counter, counterTargetW);
+    root.add(counter);
+    restBaseAt(counter, 0);
+    const cw = boundsOf(counter).size.x;
+    const cd = boundsOf(counter).size.z;
+    counter.position.x = side * (shelfW / 2 + cw / 2 + counterGap);
+    counter.position.z = shelfD * 0.35;
+    const counterTop = boundsOf(counter).max.y;
 
-    // Three layers of four cartons (2x2), each layer resting on the one below.
-    const cellW = pw * 0.46;
-    const cellD = pd * 0.46;
-    let layerY = palletTop;
-    for (let layer = 0; layer < 3; layer++) {
+    // Two layers of four boxes (2x2), each layer resting on the one below.
+    const cellW = cw * 0.46;
+    const cellD = cd * 0.46;
+    let layerY = counterTop;
+    for (let layer = 0; layer < 2; layer++) {
       const items: THREE.Object3D[] = [];
       for (let i = 0; i < 4; i++) {
-        const carton = await ctx.models.instance('model.carton');
-        fitWithin(carton, { x: cellW, y: 1e6, z: cellD });
-        carton.rotation.y = (random() - 0.5) * 0.08;
-        root.add(carton);
-        items.push(carton);
+        const box = await ctx.models.instance('model.carton');
+        fitWithin(box, { x: cellW, y: 1e6, z: cellD });
+        box.rotation.y = (random() - 0.5) * 0.08;
+        root.add(box);
+        items.push(box);
       }
-      const cb = boundsOf(items[0]);
+      const ib = boundsOf(items[0]);
       const h = arrangeGrid(items, {
         y: layerY,
-        cx: pallet.position.x,
-        cz: pallet.position.z,
+        cx: counter.position.x,
+        cz: counter.position.z,
         cols: 2,
-        spacingX: cb.size.x + shelfGap,
-        spacingZ: cb.size.z + shelfGap,
+        spacingX: ib.size.x + shelfGap,
+        spacingZ: ib.size.z + shelfGap,
       });
       layerY += h + shelfGap;
     }
-    contactShadowFor(ground, ctx, pallet, 0.45);
+    contactShadowFor(ground, ctx, counter, 0.45);
   }
 
   castShadows(root, true);
-  contactShadowFor(ground, ctx, rack, 0.35);
+  contactShadowFor(ground, ctx, shelf, 0.35);
 
   // Adaptive camera: frame the measured content.
   const { target, halfW, halfH } = frameContent(root, 1.18);

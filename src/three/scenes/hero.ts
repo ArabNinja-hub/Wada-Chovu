@@ -5,9 +5,10 @@ import { bob, damp, frameCamera } from '../rig.ts';
 import { arrangeGrid, boundsOf, fitLargest, fitWithin, frameContent, heightOf, restBaseAt } from '../layout.ts';
 
 /**
- * Hero scene: a branded stack on a pallet with containers at the base and one carton floating
- * above. Everything is placed from measured sizes, so swapping any model keeps the layout.
- * The camera frames the measured content, so a different-sized model is framed automatically.
+ * Hero scene: a stack of product boxes on a shop display counter, with containers and a pouch
+ * beside it and one box floating above. Everything is placed from measured sizes, so swapping
+ * any model keeps the layout. The camera frames the measured content, so a different-sized
+ * model is framed automatically.
  */
 export const createHeroScene: SceneFactory = async (ctx) => {
   const scene = new THREE.Scene();
@@ -31,22 +32,22 @@ export const createHeroScene: SceneFactory = async (ctx) => {
   scene.add(root);
   const random = seededRandom(7);
 
-  // Base pallet.
-  const pallet = await ctx.models.instance('model.pallet');
-  root.add(pallet);
-  const pb = boundsOf(pallet);
-  const palletTop = pb.max.y;
-  const palletW = pb.size.x;
-  const palletD = pb.size.z;
+  // Display counter as the base.
+  const counter = await ctx.models.instance('model.counter');
+  root.add(counter);
+  const pb = boundsOf(counter);
+  const counterTop = pb.max.y;
+  const counterW = pb.size.x;
+  const counterD = pb.size.z;
 
-  // Stack of cartons: 4 on the pallet, 2 above, 1 on top. Each carton is scaled to fit a
-  // cell on the pallet, so any carton model produces a neat, non-overlapping stack.
+  // Stack of cartons: 4 on the counter, 2 above, 1 on top. Each carton is scaled to fit a
+  // cell on the counter, so any carton model produces a neat, non-overlapping stack.
   const stack = new THREE.Group();
   root.add(stack);
   const gap = 0.015;
   const margin = 0.92;
-  const cellW = (palletW * margin) / 2 - gap / 2;
-  const cellD = (palletD * margin) / 2 - gap / 2;
+  const cellW = (counterW * margin) / 2 - gap / 2;
+  const cellD = (counterD * margin) / 2 - gap / 2;
 
   const makeCarton = async () => {
     const c = await ctx.models.instance('model.carton');
@@ -61,17 +62,17 @@ export const createHeroScene: SceneFactory = async (ctx) => {
   const cb = boundsOf(layer1[0]);
   const spacingX = cb.size.x + gap;
   const spacingZ = cb.size.z + gap;
-  const h1 = arrangeGrid(layer1, { y: palletTop, cols: 2, spacingX, spacingZ });
+  const h1 = arrangeGrid(layer1, { y: counterTop, cols: 2, spacingX, spacingZ });
 
   const layer2: THREE.Object3D[] = [];
   for (let i = 0; i < 2; i++) layer2.push(await makeCarton());
-  const h2 = arrangeGrid(layer2, { y: palletTop + h1 + gap, cols: 2, spacingX, spacingZ });
+  const h2 = arrangeGrid(layer2, { y: counterTop + h1 + gap, cols: 2, spacingX, spacingZ });
 
   const topCarton = await makeCarton();
   topCarton.position.x = 0;
   topCarton.position.z = 0;
-  restBaseAt(topCarton, palletTop + h1 + gap + h2 + gap);
-  const stackTop = palletTop + h1 + gap + h2 + gap + heightOf(topCarton);
+  restBaseAt(topCarton, counterTop + h1 + gap + h2 + gap);
+  const stackTop = counterTop + h1 + gap + h2 + gap + heightOf(topCarton);
 
   // Floating carton above the stack.
   const floatGap = 0.28;
@@ -81,34 +82,34 @@ export const createHeroScene: SceneFactory = async (ctx) => {
   restBaseAt(floating, stackTop + floatGap);
   const floatBaseY = floating.position.y;
 
-  // Containers on the ground beside the pallet, sized relative to the pallet.
+  // Containers on the ground beside the counter, sized relative to the counter.
   const tinA = await ctx.models.instance('model.tin');
-  fitLargest(tinA, palletW * 0.24);
+  fitLargest(tinA, counterW * 0.24);
   root.add(tinA);
   restBaseAt(tinA, 0);
-  tinA.position.x = palletW / 2 + boundsOf(tinA).size.x / 2 + 0.07;
-  tinA.position.z = palletD * 0.14;
+  tinA.position.x = counterW / 2 + boundsOf(tinA).size.x / 2 + 0.07;
+  tinA.position.z = counterD * 0.14;
 
   const tinB = await ctx.models.instance('model.tin');
-  fitLargest(tinB, palletW * 0.2);
+  fitLargest(tinB, counterW * 0.2);
   root.add(tinB);
   restBaseAt(tinB, 0);
   tinB.position.x = tinA.position.x;
-  tinB.position.z = -palletD * 0.14 - boundsOf(tinB).size.z * 0.6;
+  tinB.position.z = -counterD * 0.14 - boundsOf(tinB).size.z * 0.6;
 
-  const sack = await ctx.models.instance('model.sack');
-  fitLargest(sack, palletW * 0.26);
-  root.add(sack);
-  restBaseAt(sack, 0);
-  sack.position.x = -(palletW / 2 + boundsOf(sack).size.x / 2 + 0.07);
-  sack.position.z = 0;
+  const pouch = await ctx.models.instance('model.pouch');
+  fitLargest(pouch, counterW * 0.26);
+  root.add(pouch);
+  restBaseAt(pouch, 0);
+  pouch.position.x = -(counterW / 2 + boundsOf(pouch).size.x / 2 + 0.07);
+  pouch.position.z = 0;
 
   castShadows(root, true);
   // Measured contact shadows under the ground items.
-  contactShadowFor(ground, ctx, pallet, 0.4);
+  contactShadowFor(ground, ctx, counter, 0.4);
   contactShadowFor(ground, ctx, tinA, 0.3);
   contactShadowFor(ground, ctx, tinB, 0.28);
-  contactShadowFor(ground, ctx, sack, 0.28);
+  contactShadowFor(ground, ctx, pouch, 0.28);
 
   // Adaptive camera: frame the measured content.
   const frame = frameContent(root, 1.24);

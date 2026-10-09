@@ -1,14 +1,15 @@
 /**
  * COPY
  * ====
- * All visitor-facing wording lives here. The copy is positioning and process language.
- * It makes no claims about years trading, customer numbers, locations, certifications,
- * prices, delivery times or capacity. Add those only once they are confirmed.
+ * All visitor-facing wording lives here. The tone is that of a large, established retail shop
+ * in Luanshya: customers come in to browse and buy. The copy makes no claims about years
+ * trading, product ranges, prices, promotions, delivery, opening hours, reviews or customer
+ * numbers. Add those only once they are confirmed.
  */
 
 export const copy = {
   header: {
-    enquireCta: 'Wholesale enquiry',
+    enquireCta: 'Send an enquiry',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
     menuLabel: 'Menu',
@@ -16,86 +17,86 @@ export const copy = {
   },
 
   hero: {
-    eyebrow: 'Wholesale & bulk supply',
-    title: 'Wholesale supply, built around your volume.',
-    lead: 'Wada Chovu Wholesale supplies businesses that buy in bulk. Tell us what you need and we will reply with the next steps.',
-    primaryCta: 'Request a wholesale quote',
+    eyebrow: 'Retail shop in Luanshya',
+    title: 'Welcome to Chovu Chovu Brothers Ltd.',
+    lead: 'A large retail shop in Luanshya, Copperbelt Province, where customers come to browse, compare and buy. Ask us about a product before you visit.',
+    primaryCta: 'Send an enquiry',
     secondaryCta: 'Browse categories',
-    points: ['Bulk and trade orders', 'Repeat-order planning', 'Clear, direct enquiries'],
-    visualLabel: 'Decorative 3D view of wholesale cartons, pallet and containers',
+    points: ['Large retail shop', 'Shop in person in Luanshya', 'Enquire before you visit'],
+    visualLabel: 'Decorative 3D view of products arranged on a shop display counter',
   },
 
   about: {
-    eyebrow: 'About Wada Chovu Wholesale',
-    title: 'A wholesale partner for businesses that buy in volume.',
+    eyebrow: 'About Chovu Chovu Brothers Ltd',
+    title: 'A large shop for everyday shopping in Luanshya.',
     paragraphs: [
-      'Wada Chovu Wholesale focuses on wholesale: bulk orders, trade customers and the repeat supply that keeps a business running.',
-      'Whether you are restocking on a schedule or placing a larger one-off order, start with a short enquiry and we will take it from there.',
+      'Chovu Chovu Brothers Ltd is a large retail shop in Luanshya, Copperbelt Province, Zambia. It is a place to walk the shop floor, see products up close and choose what you need.',
+      'Not sure whether we have something? Send a short enquiry and our team will reply with the details you need before you make the trip.',
     ],
-    points: ['Trade and bulk orders', 'Repeat supply planning', 'Enquiries answered directly'],
-    imageCaption: 'Warehouse and team',
+    points: ['Browse the shop floor in person', 'Ask about products before you visit', 'Direct answers from our team'],
+    imageCaption: 'Our shop and team',
   },
 
   categories: {
-    eyebrow: 'Product categories',
-    title: 'Browse by category',
-    lead: 'Choose the range that fits your business. Pack sizes, availability and pricing are confirmed when you enquire.',
-    cta: 'Enquire about this range',
+    eyebrow: 'Shop by category',
+    title: 'Browse our categories',
+    lead: 'Product categories are being confirmed. Product names, sizes and availability will appear here once the details are final.',
+    cta: 'Ask about this category',
   },
 
   featured: {
     eyebrow: 'Featured products',
-    title: 'Featured lines',
-    lead: 'A selection of lines available on wholesale enquiry. Pack sizes and availability are confirmed on request.',
-    cta: 'Request a quote',
-    visualLabel: 'Decorative 3D view of tins and sacks on a display base',
+    title: 'Featured products',
+    lead: 'A selection of products from the shop. Sizes, prices and availability are confirmed when you enquire or visit.',
+    cta: 'Enquire about this product',
+    visualLabel: 'Decorative 3D view of products on a display base',
   },
 
   scale: {
-    eyebrow: 'Scale & distribution',
-    title: 'Built for volume, from first order to repeat orders.',
-    lead: 'Stock is planned around bulk quantities and recurring supply, so growing businesses can plan ahead with confidence.',
-    points: ['Bulk-ready ordering', 'Recurring supply planning', 'Organised stock handling'],
-    visualLabel: 'Decorative 3D view of a warehouse rack with cartons',
+    eyebrow: 'In the shop',
+    title: 'Products displayed so you can see, compare and choose.',
+    lead: 'Shelves and displays are arranged for browsing, so you can find what you came for and take a closer look before you buy.',
+    points: ['Products on open shelves', 'Displays arranged for browsing', 'Help from our team on the shop floor'],
+    visualLabel: 'Decorative 3D view of shop shelving with products on display',
   },
 
   why: {
-    eyebrow: 'Why choose us',
-    title: 'Why choose Wada Chovu Wholesale',
-    lead: 'What you can expect when you work with a supplier built for trade customers.',
+    eyebrow: 'Why shop with us',
+    title: 'Why choose Chovu Chovu Brothers Ltd',
+    lead: 'What you can expect when you visit the shop or send us an enquiry.',
     pillars: [
       {
         icon: 'box',
-        title: 'Built for bulk',
-        text: 'Our focus is wholesale quantities, so every enquiry is handled with trade volumes in mind.',
+        title: 'A large shop to browse',
+        text: 'Room to walk the shop floor, with products set out so you can see them and compare at your own pace.',
       },
       {
         icon: 'repeat',
-        title: 'Dependable repeat supply',
-        text: 'We plan around ongoing orders so that restocking stays simple and predictable.',
+        title: 'Familiar, easy to return to',
+        text: 'Come back as often as you need. Your favourite products are easy to find on the shelves.',
       },
       {
         icon: 'quote',
         title: 'Clear enquiries',
-        text: 'Send your requirements once. We reply with clear next steps.',
+        text: 'Send your question once. We reply with the answer and the next steps.',
       },
       {
         icon: 'shield',
-        title: 'Professional service',
-        text: 'Direct communication and careful handling from your first enquiry to a completed order.',
+        title: 'Friendly, professional service',
+        text: 'Courteous help from our team, from your first question to your purchase.',
       },
     ],
   },
 
   enquiry: {
-    eyebrow: 'Wholesale enquiry',
-    title: 'Start a wholesale enquiry',
-    lead: 'Tell us what you need. Product, approximate quantity and location help us respond faster.',
+    eyebrow: 'Enquiry',
+    title: 'Send us an enquiry',
+    lead: 'Tell us what you are looking for. The product, the quantity and your location help us reply faster.',
     includeTitle: 'What to include',
     include: [
-      'The product or category you need',
-      'An approximate quantity or pack count',
-      'Your business name and location',
+      'The product or category you are looking for',
+      'An approximate quantity, if you need more than one',
+      'Your name and the town or area you are in',
     ],
     privacy: 'We only use your details to respond to your enquiry.',
     submit: 'Send enquiry',
@@ -108,7 +109,7 @@ export const copy = {
     errorValidation: 'Please check the highlighted fields.',
     fields: {
       name: 'Full name',
-      company: 'Company or business name',
+      company: 'Company name (optional)',
       email: 'Email address',
       phone: 'Phone number (optional)',
       product: 'Product or category',
@@ -118,12 +119,12 @@ export const copy = {
     },
     placeholders: {
       name: 'Your name',
-      company: 'Business name',
-      email: 'name@business.com',
+      company: 'Company name, if applicable',
+      email: 'name@example.com',
       phone: 'Phone or WhatsApp number',
-      quantity: 'For example: 10 cartons',
-      location: 'Town or city',
-      message: 'Tell us what you need, how often you order, and any timing.',
+      quantity: 'For example: 2 units',
+      location: 'Town or area',
+      message: 'Tell us what you are looking for and anything we should know.',
     },
     errors: {
       required: 'This field is required.',
@@ -135,9 +136,9 @@ export const copy = {
   },
 
   location: {
-    eyebrow: 'Location & contact',
-    title: 'Find us',
-    lead: 'Contact details for enquiries and visits.',
+    eyebrow: 'Visit us',
+    title: 'Find us in Luanshya',
+    lead: 'Visit the shop in Luanshya, Copperbelt Province, or contact us for enquiries.',
     labels: {
       address: 'Address',
       phone: 'Phone',
@@ -145,11 +146,11 @@ export const copy = {
       whatsapp: 'WhatsApp',
       hours: 'Opening hours',
     },
-    imageCaption: 'Business location',
+    imageCaption: 'Chovu Chovu Brothers Ltd, Luanshya',
   },
 
   footer: {
-    tagline: 'Wholesale supply for businesses that buy in volume.',
+    tagline: 'A large retail shop in Luanshya, Copperbelt Province, Zambia.',
     navTitle: 'Explore',
     contactTitle: 'Contact',
     socialTitle: 'Follow',

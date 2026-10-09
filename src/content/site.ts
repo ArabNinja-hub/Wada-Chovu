@@ -27,8 +27,15 @@ export interface ContactItem {
 export interface SiteConfig {
   /** Public brand name used in the header, titles and copy. */
   name: string;
-  /** Registered name as shown on the supplied logo. Used in the footer legal line. */
+  /** Registered business name. Used in the footer legal line and structured data. */
   legalName: string;
+  /** Town and region of the shop. Shown on the site and in structured data. */
+  location: {
+    city: string;
+    region: string;
+    country: string;
+    countryCode: string;
+  };
   /** Production origin, for example "https://www.example.com". Leave empty until the domain is known. */
   url: string;
   /** Meta description for search engines and link previews. */
@@ -66,11 +73,17 @@ export interface SiteConfig {
 }
 
 export const site: SiteConfig = {
-  name: 'Wada Chovu Wholesale',
-  legalName: 'Wada Chovu Services Ltd',
+  name: 'Chovu Chovu Brothers Ltd',
+  legalName: 'Chovu Chovu Brothers Ltd',
+  location: {
+    city: 'Luanshya',
+    region: 'Copperbelt Province',
+    country: 'Zambia',
+    countryCode: 'ZM',
+  },
   url: '',
   description:
-    'Wada Chovu Wholesale: wholesale and bulk supply for trade customers. Send an enquiry for product, pack size and availability.',
+    'Chovu Chovu Brothers Ltd is a large retail shop in Luanshya, Copperbelt Province, Zambia. Visit the shop, or send an enquiry about products and availability.',
   logo: 'brand.logo',
   themeColor: '#0a2413',
 
@@ -84,14 +97,14 @@ export const site: SiteConfig = {
     { label: 'Categories', href: '#categories' },
     { label: 'Featured', href: '#featured' },
     { label: 'Why us', href: '#why' },
-    { label: 'Location', href: '#location' },
+    { label: 'Visit', href: '#location' },
   ],
 
   contact: {
     address: [
       { label: '[Street address]', href: '', placeholder: true },
-      { label: '[City, region]', href: '', placeholder: true },
-      { label: '[Country]', href: '', placeholder: true },
+      { label: 'Luanshya, Copperbelt Province', href: '' },
+      { label: 'Zambia', href: '' },
     ],
     phone: { label: '+00 000 000 0000', href: '', placeholder: true },
     email: { label: 'enquiries@example.com', href: 'mailto:enquiries@example.com', placeholder: true },
@@ -105,6 +118,6 @@ export const site: SiteConfig = {
   enquiry: {
     endpoint: '',
     emailTo: 'enquiries@example.com',
-    subject: 'Wholesale enquiry',
+    subject: 'Website enquiry',
   },
 };

@@ -19,7 +19,7 @@ Each image is an entry in `src/content/assets.ts`. Keys look like `category.one`
   src: '/media/products/rice-25kg.jpg',   // was the placeholder path
   width: 1200,                             // pixel size of the real file
   height: 900,
-  alt: 'Sacks of rice stacked on a pallet', // describe the photo, not the placeholder
+  alt: 'Products on a shop display counter', // describe the photo, not the placeholder
   // remove `placeholder: true` once the photo is real
 },
 ```
@@ -34,7 +34,7 @@ sizes: '(min-width: 1000px) 25vw, 50vw',
 4. Rebuild. The image keeps its frame ratio, so nothing moves on the page.
 
 Tips:
-- Product and category photos are shown at **4:3**. Warehouse and team photos are shown at **4:5** in an arch frame. Location photos are shown at **16:10**.
+- Product and category photos are shown at **4:3**. Shop front and team photos are shown at **4:5** in an arch frame. Location photos are shown at **16:10**.
 - Use `position` (for example `'50% 30%'`) to choose the visible part of a photo when it is cropped.
 - Use `alt: ''` only for purely decorative images.
 
@@ -42,7 +42,7 @@ Tips:
 
 ## 2. Replace a 3D placeholder with a .glb or .gltf model
 
-The 3D objects are model keys: `model.carton`, `model.pallet`, `model.tin`, `model.sack`, `model.rack`, `model.plinth`. Each uses built-in placeholder geometry until a file is set.
+The 3D objects are model keys: `model.carton`, `model.counter`, `model.tin`, `model.pouch`, `model.shelf`, `model.plinth`. Each uses built-in placeholder geometry until a file is set.
 
 1. Export the model as **.glb** (preferred) or .gltf. Keep it to a single static mesh if possible, and keep the file small (ideally under 1 MB).
 2. Copy it to `public/models/`, for example `public/models/carton.glb`.
@@ -103,16 +103,16 @@ The featured scene uses `model.card` for one display item, so you can see a card
 
 ## 3. Change the carton label artwork
 
-The label printed on placeholder cartons comes from `texture.cartonLabel`:
+The label printed on placeholder product boxes comes from `texture.cartonLabel`:
 
 ```ts
 'texture.cartonLabel': {
   kind: 'texture',
-  src: '/brand/wada-chovu-logo.jpeg',   // change to label artwork or a product photo
+  src: '/media/placeholders/label.png', // change to label artwork or a product photo
 },
 ```
 
-Use a file with a plain background and a 3:2-ish ratio. The label is printed on the front face of each carton.
+Use a file with a plain background and a 3:2-ish ratio. The label is printed on the front face of each placeholder box.
 
 A second texture, `texture.productCard`, is shown on product-photo cards (see section 2b). It defaults to the logo as well.
 
@@ -148,14 +148,14 @@ Entries are in `src/content/products.ts`.
 {
   id: 'category-one',         // unique, used for anchors and tracking
   name: 'Rice and grains',
-  summary: 'Bulk rice in sizes for trade and food-service customers.',
+  summary: 'Describe this range of products in one or two sentences.',
   image: 'category.one',      // an image key from assets.ts
   placeholder: false,
 },
 ```
 
 - To add a category or product, copy an entry, give it a unique `id`, and add an image entry in `assets.ts`. The grids take any number of items and wrap automatically.
-- Pack sizes are free text (`packSize`). Leave wording such as "to be confirmed" if you do not have a fixed pack size.
+- Sizes are free text (`size`). Leave wording such as "to be confirmed" if you do not have a fixed pack size.
 - Product names appear in the enquiry form's "Product or category" list automatically.
 - No prices appear anywhere. Add prices only when they are confirmed and you are ready to publish them.
 
@@ -179,7 +179,7 @@ All visitor-facing text is in `src/content/copy.ts`, grouped by section. Edit it
 Guidance for the copy:
 - Use plain, factual sentences. Avoid superlatives you cannot back up.
 - Do not add years of trading, customer counts, certifications, delivery times, prices or capacity unless they are confirmed.
-- The wording in "Why choose us" and "Scale & distribution" describes how the business works, not measured results. Keep it that way unless figures are available.
+- The wording in "Why choose us" and "In the shop" describes how the shop works, not measured results. Keep it that way unless figures are available.
 
 ---
 

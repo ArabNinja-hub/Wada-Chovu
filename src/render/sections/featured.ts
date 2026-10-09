@@ -11,7 +11,7 @@ export function renderFeaturedCard(product: FeaturedProduct, index: number): str
   <article class="product-card product-card--featured">
     ${renderImage(product.image, { className: 'product-card__media', ratio: '4 / 3' })}
     <div class="product-card__body">
-      <p class="product-card__meta">${esc(product.packSize)}</p>
+      <p class="product-card__meta">${esc(product.size)}</p>
       <h3 class="h4">${name}</h3>
       <p class="product-card__text">${esc(product.summary)}</p>
       ${button({

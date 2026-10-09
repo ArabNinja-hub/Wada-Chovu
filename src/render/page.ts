@@ -38,7 +38,7 @@ export function renderPage(year: number = new Date().getFullYear()): string {
 
 /** Head tags that depend on the site config: title, description, social previews, structured data. */
 export function renderHeadMeta(): string {
-  const title = `${site.name} | Wholesale & bulk supply`;
+  const title = `${site.name} | Retail shop in ${site.location.city}, Zambia`;
   const logo = ASSETS[site.logo];
   const logoSrc = logo.kind === 'image' ? logo.src : '';
   const absolute = (path: string) => (site.url ? `${site.url.replace(/\/$/, '')}${path}` : path);
@@ -46,10 +46,16 @@ export function renderHeadMeta(): string {
   const socialLinks = site.social.map((link) => link.href).filter(Boolean);
   const jsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'Store',
     name: site.name,
     legalName: site.legalName,
     description: site.description,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: site.location.city,
+      addressRegion: site.location.region,
+      addressCountry: site.location.countryCode,
+    },
     ...(site.url ? { url: site.url, logo: absolute(logoSrc) } : {}),
     ...(socialLinks.length ? { sameAs: socialLinks } : {}),
   };

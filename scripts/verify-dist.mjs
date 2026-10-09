@@ -17,7 +17,7 @@
  *   1. dist/index.html exists and the prerender markers are replaced.
  *   2. The prerendered page structure is present (header, hero, main, footer).
  *   3. The stylesheet link resolves to a built asset inside dist/ (never a dev
- *      `/src/` path), the file is non-empty, and it carries the Wada Chovu design
+ *      `/src/` path), the file is non-empty, and it carries the site design
  *      (brand tokens, hero styles, responsive rules).
  *   4. Every local asset URL in the page (JS entry, stylesheet, font, images,
  *      favicon) resolves to a file inside dist/.
@@ -121,7 +121,7 @@ for (const href of stylesheetHrefs) {
   const missing = ['--c-neon', '.hero', '@media'].filter((needle) => !css.includes(needle));
   if (css.length === 0 || missing.length > 0) {
     failures.push(
-      `stylesheet "${href}" does not carry the Wada Chovu design (missing ${missing.join(', ') || 'all content'})`,
+      `stylesheet "${href}" does not carry the site design (missing ${missing.join(', ') || 'all content'})`,
     );
     continue;
   }
@@ -184,13 +184,13 @@ if (failures.length > 0) {
   console.error('');
   for (const message of failures) console.error(`::error::${message}`);
   console.error('');
-  console.error(`Deployment blocked: ${rel(htmlPath)} is not the complete, styled Wada Chovu page.`);
+  console.error(`Deployment blocked: ${rel(htmlPath)} is not the complete, styled homepage.`);
   process.exit(1);
 }
 
 console.log('');
 console.log('Deployment check passed:');
-console.log(`  - ${rel(htmlPath)} is the prerendered Wada Chovu homepage`);
+console.log(`  - ${rel(htmlPath)} is the prerendered homepage`);
 console.log(`  - its stylesheet is connected and carries the design (${cssFiles.map(rel).join(', ')})`);
 console.log('  - every asset URL resolves inside dist/ and carries the Pages base');
 console.log('  - the deploy workflow uploads dist/, so this exact page is what GitHub Pages serves');

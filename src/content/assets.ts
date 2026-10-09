@@ -28,8 +28,8 @@ export const ASSETS = {
     src: '/brand/wada-chovu-logo.jpeg',
     width: 900,
     height: 529,
-    alt: 'Wada Chovu Services Ltd logo',
-    note: 'Supplied logo. Shown as-is on white surfaces.',
+    alt: 'Chovu Chovu Brothers Ltd logo',
+    note: 'Supplied logo, used unaltered. NOTE: the artwork itself reads "WADA CHOVU SERVICES LTD". Replace the file with the Chovu Chovu Brothers Ltd logo when it is available; the alt text above already uses the correct name.',
   },
   'brand.favicon': {
     kind: 'image',
@@ -48,49 +48,49 @@ export const ASSETS = {
     src: '/media/placeholders/hero-fallback.svg',
     width: 1000,
     height: 1000,
-    alt: 'Illustration of wholesale cartons and containers',
+    alt: 'Illustration of products arranged on a shop display counter',
     placeholder: true,
-    note: 'Static stand-in for the hero 3D scene. Replace with a square product or stack photo.',
+    note: 'Static stand-in for the hero 3D scene. Replace with a square photo of the shop display (1:1).',
   },
   'scale.fallback': {
     kind: 'image',
     src: '/media/placeholders/scale-fallback.svg',
     width: 1600,
     height: 1000,
-    alt: 'Illustration of a warehouse rack with cartons',
+    alt: 'Illustration of shop shelving with products on display',
     placeholder: true,
-    note: 'Static stand-in for the warehouse 3D scene. Replace with a warehouse photo (16:10).',
+    note: 'Static stand-in for the shop-floor 3D scene. Replace with a photo of the shop shelves (16:10).',
   },
   'featured.fallback': {
     kind: 'image',
     src: '/media/placeholders/featured-fallback.svg',
     width: 1200,
     height: 900,
-    alt: 'Illustration of tins and sacks on a plinth',
+    alt: 'Illustration of tins and pouches on a display base',
     placeholder: true,
     note: 'Static stand-in for the featured 3D scene. Replace with a product group photo (4:3).',
   },
 
   // ---------------------------------------------------------------------------
-  // Business, warehouse and location photography
+  // Shop, team and location photography
   // ---------------------------------------------------------------------------
   'about.image': {
     kind: 'image',
-    src: '/media/placeholders/warehouse.svg',
+    src: '/media/placeholders/shop.svg',
     width: 800,
     height: 1000,
-    alt: 'Placeholder: warehouse or team photo',
+    alt: 'Placeholder: photo of the shop front or team',
     placeholder: true,
-    note: 'Shown in an arch frame. Portrait crop (4:5) works best.',
+    note: 'Shown in an arch frame. Portrait crop (4:5) works best. Use a photo of the shop front, interior or team.',
   },
   'location.image': {
     kind: 'image',
     src: '/media/placeholders/location.svg',
     width: 1280,
     height: 800,
-    alt: 'Placeholder: business location photo',
+    alt: 'Placeholder: photo of the shop exterior',
     placeholder: true,
-    note: 'Exterior or location photo (16:10).',
+    note: 'Shop exterior or street view (16:10).',
   },
 
   // ---------------------------------------------------------------------------
@@ -178,13 +178,15 @@ export const ASSETS = {
   // ---------------------------------------------------------------------------
   'texture.cartonLabel': {
     kind: 'texture',
-    src: '/brand/wada-chovu-logo.jpeg',
-    note: 'Printed on the front label of placeholder cartons. Swap for product label artwork or a product photo.',
+    src: '/media/placeholders/label.png',
+    placeholder: true,
+    note: 'Printed on the front label of placeholder product boxes. Neutral artwork by default. Swap for product label artwork or a product photo.',
   },
   'texture.productCard': {
     kind: 'texture',
-    src: '/brand/wada-chovu-logo.jpeg',
-    note: 'Product photo shown on 3D product-photo cards (the `card` placeholder). Defaults to the logo so the demo shows the brand mark, not an empty frame. Replace with a real product photo.',
+    src: '/media/placeholders/product-card.png',
+    placeholder: true,
+    note: 'Product photo shown on 3D product-photo cards (the `card` placeholder). Neutral artwork by default. Replace with a real product photo on a plain background.',
   },
 
   // ---------------------------------------------------------------------------
@@ -194,31 +196,31 @@ export const ASSETS = {
     kind: 'model',
     builder: 'carton',
     fit: 1,
-    note: 'Set url to "/models/carton.glb" to use a real carton model.',
+    note: 'Placeholder product box. Set url to "/models/carton.glb" to use a real product model.',
   },
-  'model.pallet': {
+  'model.counter': {
     kind: 'model',
-    builder: 'pallet',
+    builder: 'counter',
     fit: 1.2,
-    note: 'Wooden pallet. Largest dimension is the width.',
+    note: 'Shop display counter. Largest dimension is the width. Scenes stack products on its top surface.',
   },
   'model.tin': {
     kind: 'model',
     builder: 'tin',
     fit: 0.72,
-    note: 'Abstract product container (tin or canister).',
+    note: 'Placeholder product container (tin or canister).',
   },
-  'model.sack': {
+  'model.pouch': {
     kind: 'model',
-    builder: 'sack',
+    builder: 'pouch',
     fit: 0.9,
-    note: 'Abstract product bag or sack.',
+    note: 'Placeholder product pouch or bag.',
   },
-  'model.rack': {
+  'model.shelf': {
     kind: 'model',
-    builder: 'rack',
+    builder: 'shelf',
     fit: 2.6,
-    note: 'Warehouse racking frame. Cartons are placed by the scene, not by the model.',
+    note: 'Retail gondola shelving. Products are placed by the scene, not by the model.',
   },
   'model.plinth': {
     kind: 'model',

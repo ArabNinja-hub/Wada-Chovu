@@ -2,7 +2,7 @@ import { copy } from '../content/copy.ts';
 import { site } from '../content/site.ts';
 
 /**
- * Wholesale enquiry form.
+ * Enquiry form.
  *
  * - Validates in the browser and marks each field with an accessible error message.
  * - Sends JSON to `site.enquiry.endpoint` when one is configured.
