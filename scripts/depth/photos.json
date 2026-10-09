@@ -9,18 +9,18 @@
       "subject": "Retail counter with shelving of unbranded products. Stand-in, not a photo of the Chovu Chovu shop."
     },
     {
-      "id": "interior",
-      "file": "unsplash-grocery-interior.jpg",
-      "sourceUrl": "https://unsplash.com/photos/interior-of-a-well-stocked-grocery-store-with-aisles-of-goods-yKn3cfE_XXU",
-      "license": "Unsplash License (free to use; attribution not required)",
-      "subject": "Interior of a well-stocked grocery store with shelves. Stand-in, not a photo of the Chovu Chovu shop."
-    },
-    {
       "id": "tins",
       "file": "pexels-canned-goods.jpg",
       "sourceUrl": "https://www.pexels.com/search/canned%20food/",
       "license": "Pexels License (free to use; attribution not required)",
       "subject": "Stack of unbranded canned goods. Stand-in product photograph."
+    },
+    {
+      "id": "shelves",
+      "file": "neutral-shelves.jpg",
+      "sourceUrl": "https://www.pexels.com/search/empty%20shelves/",
+      "license": "Pexels License (free to use; attribution not required). Confirm the exact photo page before launch.",
+      "subject": "Empty wooden wall shelves with one plain bottle against a plain wall. Neutral stand-in with no business name or signage."
     }
   ]
 }

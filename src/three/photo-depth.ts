@@ -22,6 +22,7 @@ const VERTEX_SHADER = /* glsl */ `
   uniform vec2 uPlane;     // plane width and height, in scene units
   varying vec2 vUv;
   varying float vShade;
+  varying float vEdge;
 
   float depthAt(vec2 uv) {
     return texture2D(uDepth, clamp(uv, vec2(0.0), vec2(1.0))).r;
@@ -29,7 +30,18 @@ const VERTEX_SHADER = /* glsl */ `
 
   void main() {
     vUv = uv;
-    float d = depthAt(uv);
+    // Smooth the depth over a 3x3 neighbourhood (5 taps) so single-pixel noise does not
+    // become sharp spikes in the geometry.
+    float dc = depthAt(uv);
+    float d = (dc * 2.0
+      + depthAt(uv + vec2(uTexel.x, 0.0)) + depthAt(uv - vec2(uTexel.x, 0.0))
+      + depthAt(uv + vec2(0.0, uTexel.y)) + depthAt(uv - vec2(0.0, uTexel.y))) / 6.0;
+    // Relief falls off towards the photo border, so edges stay flat and do not stretch.
+    vec2 border = min(uv, 1.0 - uv);
+    float falloff = smoothstep(0.0, 0.12, border.x) * smoothstep(0.0, 0.12, border.y);
+    vEdge = smoothstep(0.0, 0.035, border.x) * smoothstep(0.0, 0.035, border.y);
+    d = mix(0.5, d, falloff);
+
     // Relief normal from the depth slope. Depth is in [0, 1] and spans uDepthScale in Z.
     float sx = (depthAt(uv + vec2(uTexel.x, 0.0)) - depthAt(uv - vec2(uTexel.x, 0.0))) * uDepthScale / (2.0 * uTexel.x * uPlane.x);
     float sy = (depthAt(uv + vec2(0.0, uTexel.y)) - depthAt(uv - vec2(0.0, uTexel.y))) * uDepthScale / (2.0 * uTexel.y * uPlane.y);
@@ -46,10 +58,12 @@ const FRAGMENT_SHADER = /* glsl */ `
   uniform sampler2D uMap;
   varying vec2 vUv;
   varying float vShade;
+  varying float vEdge;
 
   void main() {
     vec4 colour = texture2D(uMap, vUv);
     colour.rgb *= mix(0.8, 1.06, vShade);
+    colour.a *= vEdge;
     gl_FragColor = colour;
     #include <colorspace_fragment>
   }
@@ -93,6 +107,7 @@ export async function createDepthPhoto(photo: PhotoAsset, options: { height?: nu
     },
     vertexShader: VERTEX_SHADER,
     fragmentShader: FRAGMENT_SHADER,
+    transparent: true,
   });
   const mesh = new THREE.Mesh(geometry, material);
 

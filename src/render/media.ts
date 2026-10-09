@@ -84,7 +84,9 @@ export function renderStageSlot({ scene, fallback, label, ratio, className, fetc
   // A photo fallback also names the photo for the 3D scene, which displaces it by its depth map.
   const photo = asset.kind === 'photo' ? ` data-photo="${esc(fallback)}"` : '';
   const style = ratio ? ` style="--ratio: ${esc(ratio)}"` : '';
-  return `<div class="${classes('stage-slot', className)}" data-stage="${scene}"${photo} role="img" aria-label="${esc(label ?? asset.alt)}"${style}><div class="stage-fallback">${img}${showBadge ? placeholderBadge() : ''}</div></div>`;
+  // The badge is a sibling of the fallback, not a child, so it stays visible when the 3D scene
+  // hides the static image.
+  return `<div class="${classes('stage-slot', className)}" data-stage="${scene}"${photo} role="img" aria-label="${esc(label ?? asset.alt)}"${style}><div class="stage-fallback">${img}</div>${showBadge ? placeholderBadge() : ''}</div>`;
 }
 
 export interface PlainImageOptions {

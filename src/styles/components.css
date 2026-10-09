@@ -828,6 +828,21 @@ html:not(.js) .primary-nav__cta {
   object-fit: contain;
 }
 
+/* Badge for stand-in content. It sits on the slot, above both the fallback and the 3D canvas. */
+.stage-slot > .ph-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 6;
+}
+
+/* Caption under a placeholder 3D scene. */
+.stage-note {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--c-ink-2);
+}
+
 /* Once the 3D scene renders, the static fallback fades out. */
 .stage-slot.is-3d .stage-fallback {
   opacity: 0;

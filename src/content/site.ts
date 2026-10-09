@@ -83,7 +83,7 @@ export const site: SiteConfig = {
   },
   url: '',
   description:
-    'Chovu Chovu Brothers Ltd is a large retail shop in Luanshya, Copperbelt Province, Zambia. Visit the shop, or send an enquiry about products and availability.',
+    'Chovu Chovu Brothers Ltd is a retail shop in Luanshya, Copperbelt Province, Zambia. Visit the shop, or send an enquiry about products and availability.',
   logo: 'brand.logo',
   themeColor: '#0a2413',
 
@@ -107,7 +107,8 @@ export const site: SiteConfig = {
       { label: 'Zambia', href: '' },
     ],
     phone: { label: '+00 000 000 0000', href: '', placeholder: true },
-    email: { label: 'enquiries@example.com', href: 'mailto:enquiries@example.com', placeholder: true },
+    // No live link until the real enquiry address is confirmed.
+    email: { label: 'enquiries@example.com', href: '', placeholder: true },
     whatsapp: { label: '', href: '' },
     hours: { label: '[Opening hours to be confirmed]', href: '', placeholder: true },
   },

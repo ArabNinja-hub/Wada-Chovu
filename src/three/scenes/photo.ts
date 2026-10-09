@@ -41,11 +41,13 @@ export const createPhotoScene: SceneFactory = async (ctx, slot) => {
       group.rotation.set(0, 0, 0);
       return;
     }
-    const targetYaw = Math.sin(frame.time * 0.35) * 0.07 + frame.pointer.x * 0.2;
-    const targetPitch = Math.sin(frame.time * 0.27 + 1.1) * 0.035 - frame.pointer.y * 0.12;
-    yaw = damp(yaw, targetYaw, 2.4, frame.dt);
-    pitch = damp(pitch, targetPitch, 2.4, frame.dt);
+    // Small, slow turns keep the relief readable without distorting the photo's proportions.
+    const targetYaw = Math.sin(frame.time * 0.22) * 0.035 + frame.pointer.x * 0.1;
+    const targetPitch = Math.sin(frame.time * 0.17 + 1.1) * 0.018 - frame.pointer.y * 0.06;
+    yaw = damp(yaw, targetYaw, 2.0, frame.dt);
+    pitch = damp(pitch, targetPitch, 2.0, frame.dt);
     group.rotation.set(pitch, yaw, 0);
+    group.position.z = Math.sin(frame.time * 0.13) * 0.02;
   };
 
   const handle: SceneHandle = { scene, camera, update };

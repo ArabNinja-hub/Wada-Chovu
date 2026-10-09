@@ -44,6 +44,7 @@ export function renderFeatured(): string {
           label: copy.featured.visualLabel,
           className: 'featured__slot',
         })}
+        <p class="stage-note">${esc(copy.featured.stageNote)}</p>
       </div>
     </div>
     <ul class="card-grid card-grid--4" role="list">${cards}</ul>

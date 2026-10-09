@@ -2,7 +2,7 @@
   "name": "chovu-chovu-brothers",
   "private": true,
   "version": "1.0.0",
-  "description": "Chovu Chovu Brothers Ltd website: a large retail shop in Luanshya, Zambia. Static, prerendered, with an optional lazy-loaded Three.js scene.",
+  "description": "Chovu Chovu Brothers Ltd website: a retail shop in Luanshya, Zambia. Static, prerendered, with an optional lazy-loaded Three.js scene.",
   "type": "module",
   "engines": {
     "node": ">=20.19.0"

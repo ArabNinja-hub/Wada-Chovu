@@ -30,8 +30,11 @@ described as 3D anywhere on the site.
   with its weights supplied; see "Using another depth model" below.
 - Monocular depth is a relative estimate learned from indoor and outdoor photographs. It is not a
   measured scan, so distances are approximate.
-- Photographs of other businesses (stand-ins) are used until the shop's own photographs are
-  supplied. Their alt text says so.
+- Stand-in photographs are used until the shop's own photographs are supplied. Their alt text
+  says so. No stand-in may show another business's name or signage.
+- Depth maps are checked by eye before use. The shelves photograph's map was inverted (the plain
+  wall was nearer than the shelves), so it was **not** used. Its photo is only a static stand-in.
+  Check every new depth map before it goes in a 3D scene.
 
 ## Adding a photograph (no animation code)
 
@@ -71,8 +74,9 @@ the build environment, so it was **not** used.
 | Asset key | File | Source | Licence | Status |
 | --- | --- | --- | --- | --- |
 | `photo.hero` | `counter.jpg` / `counter-depth.png` | https://unsplash.com/photos/a-minimalist-shop-with-shelves-and-products-nzisN6dYiV8 | Unsplash License | Stand-in (not the Chovu Chovu shop) |
-| `photo.shopFloor` | `interior.jpg` / `interior-depth.png` | https://unsplash.com/photos/interior-of-a-well-stocked-grocery-store-with-aisles-of-goods-yKn3cfE_XXU | Unsplash License | Stand-in (another business's shop) |
-| `featured.fallback`, `texture.productCard`, category and product images | `tins.jpg` | https://www.pexels.com/search/canned%20food/ | Pexels License | Stand-in product photograph |
+| `photo.shopFloor` | `tins.jpg` / `tins-depth.png` | https://www.pexels.com/search/canned%20food/ | Pexels License | Stand-in product photograph (replaces the removed shop-floor photo, which showed another business's signage) |
+| `featured.fallback`, `texture.productCard`, `location.image`, some category and product images | `tins.jpg` | https://www.pexels.com/search/canned%20food/ | Pexels License | Stand-in |
+| some category and product images | `shelves.jpg` (no depth map) | https://www.pexels.com/search/empty%20shelves/ | Pexels License | Stand-in; confirm the exact photo page before launch |
 
 Still needed from the shop: a photo of the **exterior**, a photo of the **pouches** and a
 product photo set. None of these has a licensed replacement in the repository yet.
@@ -81,12 +85,11 @@ product photo set. None of these has a licensed replacement in the repository ye
 
 | Asset key | File | Source | Licence |
 | --- | --- | --- | --- |
-| `model.bottle` | `public/models/water-bottle.glb` | Khronos glTF Sample Models, WaterBottle | CC0 1.0 |
-| `model.produce` | `public/models/avocado.glb` | Khronos glTF Sample Models, Avocado | CC0 1.0 |
 | `model.box` | `public/models/box-textured.glb` | Khronos glTF Sample Models, BoxTextured | CC BY 4.0 (attribution in `public/models/CREDITS.md`) |
 
-These are placeholders. They are not Chovu Chovu products. Textures were reduced to 512 px with
-`@gltf-transform/cli`.
+This is generic placeholder packaging for layout only. It is not a product sold by the shop. The
+bottle and avocado samples were removed because they implied beverage and produce categories.
+Textures were reduced to 512 px with `@gltf-transform/cli`.
 
 ## Verification
 

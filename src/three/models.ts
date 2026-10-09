@@ -8,7 +8,7 @@ import type { MaterialLibrary } from './materials.ts';
 /**
  * Model library: the single seam between scenes and 3D content.
  *
- * Scenes ask for a model by key ("model.bottle"). This library decides whether to load a
+ * Scenes ask for a model by key ("model.box"). This library decides whether to load a
  * .glb / .gltf file (when the manifest sets `url`) or to use the placeholder geometry.
  * Either way the result is normalised the same way:
  *   - scaled so its largest dimension equals the manifest's `fit`

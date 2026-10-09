@@ -19,8 +19,7 @@ the photo, so the 3D scene uses the real image.
 
 ## 2. Replace a 3D object with a .glb or .gltf model
 
-The 3D objects are model keys: `model.bottle`, `model.produce`, `model.box` and `model.plinth`. The first three
-are real GLB files from the Khronos sample set (see `public/models/CREDITS.md`). To use your own model:
+The 3D objects are model keys: `model.box` (generic placeholder packaging, a GLB file from the Khronos sample set, see `public/models/CREDITS.md`) and `model.plinth` (procedural). To use your own model:
 
 1. Copy the file into `public/models/` (for example `public/models/rice-bag.glb`).
 2. Set `url` on the matching `model.*` entry, such as `url: '/models/rice-bag.glb'`.

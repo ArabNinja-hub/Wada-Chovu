@@ -21,8 +21,10 @@
  */
 import type { AssetDefinition, ImageAsset, ModelAsset, PhotoAsset, TextureAsset } from './types.ts';
 
+// TODO before launch: replace this search page with the exact Pexels photo page for the image used.
+const SOURCE_TINS = 'https://www.pexels.com/search/canned%20food/';
+const LICENSE_PEXELS = 'Pexels License (free to use; attribution not required)';
 const SOURCE_COUNTER = 'https://unsplash.com/photos/a-minimalist-shop-with-shelves-and-products-nzisN6dYiV8';
-const SOURCE_INTERIOR = 'https://unsplash.com/photos/interior-of-a-well-stocked-grocery-store-with-aisles-of-goods-yKn3cfE_XXU';
 const LICENSE_UNSPLASH = 'Unsplash License (free to use; attribution not required)';
 
 export const ASSETS = {
@@ -56,7 +58,7 @@ export const ASSETS = {
     depth: '/media/photos/counter-depth.png',
     width: 960,
     height: 1280,
-    depthScale: 0.32,
+    depthScale: 0.2,
     alt: 'Stand-in photograph of a retail counter with shelves of unbranded products. Replace it with a photo of the Chovu Chovu shop.',
     placeholder: true,
     source: SOURCE_COUNTER,
@@ -65,18 +67,17 @@ export const ASSETS = {
   },
   'photo.shopFloor': {
     kind: 'photo',
-    src: '/media/photos/interior.jpg',
-    depth: '/media/photos/interior-depth.png',
-    width: 1280,
-    height: 853,
-    depthScale: 0.4,
-    alt: 'Stand-in photograph of a shop interior with shelves and aisles. Replace it with a photo of the Chovu Chovu shop floor.',
+    src: '/media/photos/tins.jpg',
+    depth: '/media/photos/tins-depth.png',
+    width: 500,
+    height: 333,
+    depthScale: 0.2,
+    alt: 'Stand-in photograph of stacked canned goods. Replace it with a photo of the Chovu Chovu shop floor.',
     placeholder: true,
-    source: SOURCE_INTERIOR,
-    license: LICENSE_UNSPLASH,
-    note: 'Shop-floor 3D photo. Depth map from FastDepth (scripts/depth). Replace with a landscape photo of the shop floor.',
+    source: SOURCE_TINS,
+    license: LICENSE_PEXELS,
+    note: 'Shop-floor 3D photo. Depth map from FastDepth (scripts/depth). The earlier shop-floor photograph showed another business and was removed. Replace with a landscape photo of the Chovu Chovu shop floor.',
   },
-
   // ---------------------------------------------------------------------------
   // Static photographs (fallbacks and plain images)
   // ---------------------------------------------------------------------------
@@ -100,10 +101,10 @@ export const ASSETS = {
   },
   'location.image': {
     kind: 'image',
-    src: '/media/photos/interior.jpg',
-    width: 1280,
-    height: 853,
-    alt: 'Stand-in photograph of a shop interior. The exterior photograph has not been supplied yet.',
+    src: '/media/photos/tins.jpg',
+    width: 500,
+    height: 333,
+    alt: 'Stand-in photograph of stacked canned goods. The exterior photograph of the shop has not been supplied yet.',
     placeholder: true,
     note: 'Shop exterior or street view (16:10). No licensed exterior photograph is in the repository yet.',
   },
@@ -113,10 +114,10 @@ export const ASSETS = {
   // ---------------------------------------------------------------------------
   'category.one': {
     kind: 'image',
-    src: '/media/photos/interior.jpg',
-    width: 1280,
-    height: 853,
-    alt: 'Stand-in photograph of a shop interior with shelves',
+    src: '/media/photos/shelves.jpg',
+    width: 500,
+    height: 750,
+    alt: 'Stand-in photograph of empty wooden shelves against a plain wall',
     placeholder: true,
     note: 'Category photo. Each category has its own key so each can be swapped independently.',
   },
@@ -140,10 +141,10 @@ export const ASSETS = {
   },
   'category.four': {
     kind: 'image',
-    src: '/media/photos/interior.jpg',
-    width: 1280,
-    height: 853,
-    alt: 'Stand-in photograph of a shop interior with shelves',
+    src: '/media/photos/shelves.jpg',
+    width: 500,
+    height: 750,
+    alt: 'Stand-in photograph of empty wooden shelves against a plain wall',
     placeholder: true,
     note: 'Category photo.',
   },
@@ -176,10 +177,10 @@ export const ASSETS = {
   },
   'product.four': {
     kind: 'image',
-    src: '/media/photos/interior.jpg',
-    width: 1280,
-    height: 853,
-    alt: 'Stand-in photograph of a shop interior with shelves',
+    src: '/media/photos/shelves.jpg',
+    width: 500,
+    height: 750,
+    alt: 'Stand-in photograph of empty wooden shelves against a plain wall',
     placeholder: true,
     note: 'Product photo.',
   },
@@ -202,28 +203,15 @@ export const ASSETS = {
 
   // ---------------------------------------------------------------------------
   // 3D models. Real GLB files; the builder is the fallback if a file fails to load.
-  // Attribution for the sample models is in public/models/CREDITS.md.
+  // Only generic packaging is used, so no product category is implied. Attribution is in
+  // public/models/CREDITS.md.
   // ---------------------------------------------------------------------------
-  'model.bottle': {
-    kind: 'model',
-    url: '/models/water-bottle.glb',
-    builder: 'tin',
-    fit: 0.95,
-    note: 'Khronos WaterBottle sample (CC0). Placeholder product model; not a Chovu Chovu product.',
-  },
-  'model.produce': {
-    kind: 'model',
-    url: '/models/avocado.glb',
-    builder: 'tin',
-    fit: 0.6,
-    note: 'Khronos Avocado sample (CC0). Placeholder product model; not a Chovu Chovu product.',
-  },
   'model.box': {
     kind: 'model',
     url: '/models/box-textured.glb',
     builder: 'carton',
     fit: 0.9,
-    note: 'Khronos BoxTextured sample (CC BY 4.0, attribution in public/models/CREDITS.md). Placeholder product model.',
+    note: 'Khronos BoxTextured sample (CC BY 4.0, attribution in public/models/CREDITS.md). Generic placeholder packaging, not a product sold by the shop.',
   },
   'model.plinth': {
     kind: 'model',

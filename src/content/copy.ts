@@ -1,7 +1,7 @@
 /**
  * COPY
  * ====
- * All visitor-facing wording lives here. The tone is that of a large, established retail shop
+ * All visitor-facing wording lives here. The tone is that of a retail shop
  * in Luanshya: customers come in to browse and buy. The copy makes no claims about years
  * trading, product ranges, prices, promotions, delivery, opening hours, reviews or customer
  * numbers. Add those only once they are confirmed.
@@ -19,18 +19,18 @@ export const copy = {
   hero: {
     eyebrow: 'Retail shop in Luanshya',
     title: 'Welcome to Chovu Chovu Brothers Ltd.',
-    lead: 'A large retail shop in Luanshya, Copperbelt Province, where customers come to browse, compare and buy. Ask us about a product before you visit.',
+    lead: 'A retail shop in Luanshya, Copperbelt Province, where customers come to browse, compare and buy. Ask us about a product before you visit.',
     primaryCta: 'Send an enquiry',
     secondaryCta: 'Browse categories',
-    points: ['Large retail shop', 'Shop in person in Luanshya', 'Enquire before you visit'],
+    points: ['Retail shop in Luanshya', 'Shop in person in Luanshya', 'Enquire before you visit'],
     visualLabel: 'Decorative 3D view of a shop counter photograph, with depth',
   },
 
   about: {
     eyebrow: 'About Chovu Chovu Brothers Ltd',
-    title: 'A large shop for everyday shopping in Luanshya.',
+    title: 'A shop for everyday shopping in Luanshya.',
     paragraphs: [
-      'Chovu Chovu Brothers Ltd is a large retail shop in Luanshya, Copperbelt Province, Zambia. It is a place to walk the shop floor, see products up close and choose what you need.',
+      'Chovu Chovu Brothers Ltd is a retail shop in Luanshya, Copperbelt Province, Zambia. It is a place to walk the shop floor, see products up close and choose what you need.',
       'Not sure whether we have something? Send a short enquiry and our team will reply with the details you need before you make the trip.',
     ],
     points: ['Browse the shop floor in person', 'Ask about products before you visit', 'Direct answers from our team'],
@@ -49,7 +49,8 @@ export const copy = {
     title: 'Featured products',
     lead: 'A selection of products from the shop. Sizes, prices and availability are confirmed when you enquire or visit.',
     cta: 'Enquire about this product',
-    visualLabel: 'Decorative 3D view of products on a display base',
+    visualLabel: 'Decorative 3D view of placeholder packaging models on a display base. They are not products for sale.',
+    stageNote: 'Placeholder 3D packaging, shown for layout only. These are not products for sale.',
   },
 
   scale: {
@@ -67,7 +68,7 @@ export const copy = {
     pillars: [
       {
         icon: 'box',
-        title: 'A large shop to browse',
+        title: 'A shop to browse',
         text: 'Room to walk the shop floor, with products set out so you can see them and compare at your own pace.',
       },
       {
@@ -150,7 +151,7 @@ export const copy = {
   },
 
   footer: {
-    tagline: 'A large retail shop in Luanshya, Copperbelt Province, Zambia.',
+    tagline: 'A retail shop in Luanshya, Copperbelt Province, Zambia.',
     navTitle: 'Explore',
     contactTitle: 'Contact',
     socialTitle: 'Follow',
