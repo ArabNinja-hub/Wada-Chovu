@@ -9,7 +9,7 @@ import { renderHeadMeta, renderPage } from './src/render/page.ts';
  */
 function prerender(): Plugin {
   return {
-    name: 'wada-chovu:prerender',
+    name: 'chovu-chovu-brothers-ltd:prerender',
     transformIndexHtml: {
       order: 'pre',
       handler(html) {

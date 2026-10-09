@@ -1,6 +1,6 @@
-# Wada Chovu Wholesale
+# Chovu Chovu Brothers Ltd
 
-The website for **Wada Chovu Wholesale**. It is a static, prerendered site: the complete page is in the HTML before any JavaScript runs. Optional Three.js scenes add motion on capable devices, and the page is fully usable without them.
+The website for **Chovu Chovu Brothers Ltd**. It is a static, prerendered site: the complete page is in the HTML before any JavaScript runs. Optional Three.js scenes add motion on capable devices, and the page is fully usable without them.
 
 Brand reference: the supplied logo, `public/brand/wada-chovu-logo.jpeg`. The palette in `src/styles/tokens.css` is sampled from it.
 
@@ -169,7 +169,7 @@ Asset-agnosticism was verified in the browser against the dev server with a temp
 
 Items that need an owner's decision or real information:
 
-1. **Legal name.** The logo reads "Wada Chovu Services Ltd" and the brief says "Wholesale". The footer uses the logo name. Confirm which name the legal line should show.
+1. **Name and logo.** The site uses "Chovu Chovu Brothers Ltd" as its name and legal name. The logo artwork (`public/brand/wada-chovu-logo.jpeg`) still reads "WADA CHOVU SERVICES LTD", so replace it with artwork that carries the new name. Confirm that the legal name matches the registered company name.
 2. **Contact details, address and opening hours** (`src/content/site.ts`).
 3. **Production URL** (`site.url`), used for canonical links, social previews and structured data.
 4. **Enquiry handling.** Choose an endpoint, or confirm the email address that receives enquiries.

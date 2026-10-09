@@ -28,7 +28,7 @@ export const ASSETS = {
     src: '/brand/wada-chovu-logo.jpeg',
     width: 900,
     height: 529,
-    alt: 'Wada Chovu Services Ltd logo',
+    alt: 'Chovu Chovu Brothers Ltd logo',
     note: 'Supplied logo. Shown as-is on white surfaces.',
   },
   'brand.favicon': {

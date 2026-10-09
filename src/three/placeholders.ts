@@ -6,11 +6,11 @@ import type { MaterialLibrary } from './materials.ts';
 /**
  * Placeholder models, built in code.
  *
- * These stand in for the real Wada Chovu products until .glb models or product photos are
- * supplied. They are deliberately finished objects, not raw primitives: a branded carton, a
- * glossy sealed tin, a product sack, a wooden pallet, warehouse racking, a display plinth, and
- * a product-photo card. They share the palette and lighting of the live scenes so the demo
- * reads as one intentional set.
+ * These stand in for the real Chovu Chovu Brothers Ltd products until .glb models or product
+ * photos are supplied. They are deliberately finished objects, not raw primitives: a branded
+ * carton, a glossy sealed tin, a product sack, a wooden pallet, warehouse racking, a display
+ * plinth, and a product-photo card. They share the palette and lighting of the live scenes so
+ * the demo reads as one intentional set.
  *
  * The `card` builder is the product-imagery path: it shows a product photo on a framed panel
  * in place of a 3D object. Point `texture.productCard` at a real photo and set a model key's

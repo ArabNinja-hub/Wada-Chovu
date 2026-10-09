@@ -18,7 +18,7 @@ export const copy = {
   hero: {
     eyebrow: 'Wholesale & bulk supply',
     title: 'Wholesale supply, built around your volume.',
-    lead: 'Wada Chovu Wholesale supplies businesses that buy in bulk. Tell us what you need and we will reply with the next steps.',
+    lead: 'Chovu Chovu Brothers Ltd supplies businesses that buy in bulk. Tell us what you need and we will reply with the next steps.',
     primaryCta: 'Request a wholesale quote',
     secondaryCta: 'Browse categories',
     points: ['Bulk and trade orders', 'Repeat-order planning', 'Clear, direct enquiries'],
@@ -26,10 +26,10 @@ export const copy = {
   },
 
   about: {
-    eyebrow: 'About Wada Chovu Wholesale',
+    eyebrow: 'About Chovu Chovu Brothers Ltd',
     title: 'A wholesale partner for businesses that buy in volume.',
     paragraphs: [
-      'Wada Chovu Wholesale focuses on wholesale: bulk orders, trade customers and the repeat supply that keeps a business running.',
+      'Chovu Chovu Brothers Ltd focuses on wholesale: bulk orders, trade customers and the repeat supply that keeps a business running.',
       'Whether you are restocking on a schedule or placing a larger one-off order, start with a short enquiry and we will take it from there.',
     ],
     points: ['Trade and bulk orders', 'Repeat supply planning', 'Enquiries answered directly'],
@@ -61,7 +61,7 @@ export const copy = {
 
   why: {
     eyebrow: 'Why choose us',
-    title: 'Why choose Wada Chovu Wholesale',
+    title: 'Why choose Chovu Chovu Brothers Ltd',
     lead: 'What you can expect when you work with a supplier built for trade customers.',
     pillars: [
       {

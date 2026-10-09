@@ -1,8 +1,8 @@
 {
-  "name": "wada-chovu-wholesale",
+  "name": "chovu-chovu-brothers-ltd",
   "private": true,
   "version": "1.0.0",
-  "description": "Wada Chovu Wholesale website: static, prerendered, with an optional lazy-loaded Three.js scene.",
+  "description": "Chovu Chovu Brothers Ltd website: static, prerendered, with an optional lazy-loaded Three.js scene.",
   "type": "module",
   "engines": {
     "node": ">=20.19.0"

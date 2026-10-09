@@ -27,7 +27,7 @@ export interface ContactItem {
 export interface SiteConfig {
   /** Public brand name used in the header, titles and copy. */
   name: string;
-  /** Registered name as shown on the supplied logo. Used in the footer legal line. */
+  /** Registered company name. Used in the footer legal line and structured data. */
   legalName: string;
   /** Production origin, for example "https://www.example.com". Leave empty until the domain is known. */
   url: string;
@@ -66,11 +66,11 @@ export interface SiteConfig {
 }
 
 export const site: SiteConfig = {
-  name: 'Wada Chovu Wholesale',
-  legalName: 'Wada Chovu Services Ltd',
+  name: 'Chovu Chovu Brothers Ltd',
+  legalName: 'Chovu Chovu Brothers Ltd',
   url: '',
   description:
-    'Wada Chovu Wholesale: wholesale and bulk supply for trade customers. Send an enquiry for product, pack size and availability.',
+    'Chovu Chovu Brothers Ltd: wholesale and bulk supply for trade customers. Send an enquiry for product, pack size and availability.',
   logo: 'brand.logo',
   themeColor: '#0a2413',
 

@@ -4,8 +4,7 @@ import type { TextureLibrary } from './textures.ts';
 
 /**
  * Shared materials and geometry. Each name is created once and reused by every instance, so
- * cloning a model is cheap and draw calls stay low. Colours are sampled from the supplied
- * Wada Chovu logo.
+ * cloning a model is cheap and draw calls stay low. Colours are sampled from the supplied logo.
  */
 
 const PALETTE = {

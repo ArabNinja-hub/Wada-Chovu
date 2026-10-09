@@ -6,7 +6,7 @@
  *
  * These files are stand-ins only. Each one is referenced from src/content/assets.ts and is
  * replaced by a real photo or illustration when it is available. None of them depicts an
- * actual Wada Chovu product.
+ * actual Chovu Chovu Brothers Ltd product.
  *
  * The 3D fallbacks use the same isometric projection and compositions as the live scenes,
  * so a visitor without WebGL sees the same arrangement as one with it.
