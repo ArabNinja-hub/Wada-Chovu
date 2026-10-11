@@ -45,8 +45,6 @@ export interface SiteConfig {
   /** Brand colour for the browser UI (matches --c-forest-900). */
   themeColor: string;
   features: {
-    /** Show the animated 3D scenes. When false, the static fallback images are used. */
-    threeD: boolean;
     /** Show "Placeholder" markers on unconfirmed content. Set false once the content is final. */
     placeholderMarkers: boolean;
   };
@@ -131,7 +129,6 @@ export const site: SiteConfig = {
   themeColor: '#0a2413',
 
   features: {
-    threeD: true,
     placeholderMarkers: true,
   },
 

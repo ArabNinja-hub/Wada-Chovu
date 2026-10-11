@@ -1,7 +1,6 @@
 import { copy } from '../../content/copy.ts';
 import { esc } from '../html.ts';
 import { icon } from '../icons.ts';
-import { renderImage } from '../media.ts';
 import { button, eyebrow } from '../ui.ts';
 
 export function renderAbout(): string {
@@ -13,9 +12,6 @@ export function renderAbout(): string {
   return `
 <section class="section about" id="about" aria-labelledby="about-title">
   <div class="container about__grid">
-    <div class="about__media" data-reveal>
-      ${renderImage('about.image', { className: 'media--arch', ratio: '4 / 5' })}
-    </div>
     <div class="about__copy" data-reveal style="--d: 100ms">
       ${eyebrow(copy.about.eyebrow)}
       <h2 class="h2" id="about-title">${esc(copy.about.title)}</h2>

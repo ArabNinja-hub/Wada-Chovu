@@ -2,7 +2,6 @@ import { copy } from '../../content/copy.ts';
 import { site, type ContactItem } from '../../content/site.ts';
 import { esc } from '../html.ts';
 import { icon, type IconName } from '../icons.ts';
-import { renderImage } from '../media.ts';
 import { placeholderText, sectionHead } from '../ui.ts';
 
 /** Renders a contact value as a link when a target exists, otherwise as plain (or placeholder) text. */
@@ -43,9 +42,6 @@ export function renderLocation(): string {
       })}
       <dl class="contact-list">${rows}
       </dl>
-    </div>
-    <div class="location__media" data-reveal style="--d: 120ms">
-      ${renderImage('location.image', { className: 'media--rounded', ratio: '16 / 10' })}
     </div>
   </div>
 </section>`;

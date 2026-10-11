@@ -1,12 +1,10 @@
 import { copy } from '../../content/copy.ts';
 import { esc } from '../html.ts';
 import { icon } from '../icons.ts';
-import { renderStageSlot } from '../media.ts';
 import { eyebrow } from '../ui.ts';
 
 /**
- * Dark band with the shop-floor 3D scene. The copy sits above the stage, so the
- * 3D composition never overlaps text.
+ * Dark band with the shop-floor copy.
  */
 export function renderScale(): string {
   const points = copy.scale.points
@@ -21,14 +19,6 @@ export function renderScale(): string {
       <h2 class="h2 on-dark" id="scale-title">${esc(copy.scale.title)}</h2>
       <p class="lead on-dark-muted">${esc(copy.scale.lead)}</p>
       <ul class="check-list check-list--dark scale__points">${points}</ul>
-    </div>
-    <div class="scale__stage" data-reveal style="--d: 120ms">
-      ${renderStageSlot({
-        scene: 'scale',
-        fallback: 'photo.shopFloor',
-        label: copy.scale.visualLabel,
-        className: 'scale__slot',
-      })}
     </div>
   </div>
 </section>`;

@@ -71,53 +71,9 @@
   flex: none;
 }
 
-.hero__visual {
-  position: relative;
-  width: 100%;
-  max-width: 560px;
-  justify-self: center;
-}
-
-/* The arch echoes the supplied logo. It sits under the 3D canvas and never covers it. */
-.arch {
-  position: absolute;
-  inset: 6% 0 0 0;
-  overflow: hidden;
-  border-radius: 50% 50% 28px 28px / 38% 38% 28px 28px;
-  background: linear-gradient(180deg, var(--c-forest-700) 0%, var(--c-forest-900) 72%, var(--c-forest-950) 100%);
-  box-shadow: inset 0 0 0 1px rgb(6 252 7 / 0.22);
-}
-
-.arch::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(60% 40% at 50% 0%, rgb(6 252 7 / 0.16), transparent 70%);
-}
-
-.arch__sun {
-  position: absolute;
-  left: 50%;
-  bottom: 24%;
-  width: 46%;
-  aspect-ratio: 1;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 34%, #ff9c52 0%, var(--c-sun) 58%, #d95200 100%);
-  box-shadow: 0 0 70px 14px rgb(254 103 0 / 0.26);
-}
-
-.hero__stage {
-  aspect-ratio: 1 / 1;
-}
-
 @media (min-width: 900px) {
   .hero__grid {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  }
-
-  .hero__stage {
-    aspect-ratio: 5 / 5.6;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -144,12 +100,6 @@
   margin-top: 0.5rem;
 }
 
-@media (min-width: 900px) {
-  .about__grid {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
-  }
-}
-
 /* Categories and featured products ---------------------------------------- */
 
 .categories {
@@ -165,16 +115,6 @@
   gap: 2rem;
   align-items: center;
   margin-bottom: clamp(2.25rem, 5vw, 3.5rem);
-}
-
-.featured__stage .stage-slot {
-  aspect-ratio: 4 / 3;
-}
-
-@media (min-width: 900px) {
-  .featured__head {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
-  }
 }
 
 /* Shop-floor band (dark) -------------------------------------------------- */
@@ -225,21 +165,9 @@
   margin-top: 0.75rem;
 }
 
-.scale__stage {
-  min-width: 0;
-}
-
-.scale__slot {
-  aspect-ratio: 16 / 10;
-}
-
 @media (min-width: 900px) {
   .scale__grid {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  }
-
-  .scale__slot {
-    aspect-ratio: 16 / 10;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -372,12 +300,6 @@
   gap: 0;
 }
 
-@media (min-width: 900px) {
-  .location__grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-}
-
 /* Footer ------------------------------------------------------------------ */
 
 .site-footer {
@@ -499,74 +421,4 @@
   .site-footer__grid {
     grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr) minmax(0, 1.1fr);
   }
-}
-
-/* Product assembly --------------------------------------------------------- */
-
-/*
- * Static (default): a normal section. The stage slot keeps a fixed ratio and the photographs
- * sit in a grid, which is the fallback when 3D is unavailable or motion is reduced.
- * Pinned (.is-pinned, set only when the 3D scene can run): the section reserves scroll
- * distance, and the pin element stays on screen beneath the header while the scene plays.
- */
-
-.assembly {
-  --assembly-distance: 320svh;
-  background: #ffffff;
-}
-
-.assembly__pin {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.75rem, 2.5vh, 1.5rem);
-}
-
-.assembly__head {
-  flex: none;
-  max-width: 44rem;
-}
-
-.assembly .assembly__slot.stage-slot {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-}
-
-.assembly__fallback {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.5rem, 1.5vw, 1rem);
-  padding: clamp(0.5rem, 1.5vw, 1rem);
-}
-
-.assembly__fallback img {
-  min-height: 0;
-  object-fit: contain;
-}
-
-@media (min-width: 900px) {
-  .assembly .assembly__slot.stage-slot {
-    aspect-ratio: 16 / 10;
-  }
-}
-
-.assembly.is-pinned {
-  height: calc(100svh + var(--assembly-distance));
-  padding-block: 0;
-}
-
-.assembly.is-pinned .assembly__pin {
-  height: 100svh;
-  /* The header is fixed above this content, so the content starts below it. */
-  padding-top: calc(var(--header-h) + clamp(0.75rem, 2.5vh, 1.5rem));
-  padding-bottom: clamp(0.75rem, 2.5vh, 1.5rem);
-  background: #ffffff;
-}
-
-.assembly.is-pinned .assembly .assembly__slot.stage-slot,
-.assembly.is-pinned .assembly__slot.stage-slot {
-  flex: 1 1 auto;
-  min-height: 0;
-  aspect-ratio: auto;
 }

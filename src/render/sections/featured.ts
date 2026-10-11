@@ -1,7 +1,6 @@
 import { featuredProducts, type FeaturedProduct } from '../../content/products.ts';
 import { copy } from '../../content/copy.ts';
 import { esc } from '../html.ts';
-import { renderImage, renderStageSlot } from '../media.ts';
 import { button, eyebrow, placeholderText } from '../ui.ts';
 
 export function renderFeaturedCard(product: FeaturedProduct, index: number): string {
@@ -9,7 +8,6 @@ export function renderFeaturedCard(product: FeaturedProduct, index: number): str
   return `
 <li class="grid__item" data-reveal style="--d: ${index * 80}ms">
   <article class="product-card product-card--featured">
-    ${renderImage(product.image, { className: 'product-card__media', ratio: '4 / 3' })}
     <div class="product-card__body">
       <p class="product-card__meta">${esc(product.size)}</p>
       <h3 class="h4">${name}</h3>
@@ -36,15 +34,6 @@ export function renderFeatured(): string {
         ${eyebrow(copy.featured.eyebrow)}
         <h2 class="h2" id="featured-title">${esc(copy.featured.title)}</h2>
         <p class="lead">${esc(copy.featured.lead)}</p>
-      </div>
-      <div class="featured__stage" data-reveal style="--d: 120ms">
-        ${renderStageSlot({
-          scene: 'featured',
-          fallback: 'featured.fallback',
-          label: copy.featured.visualLabel,
-          className: 'featured__slot',
-        })}
-        <p class="stage-note">${esc(copy.featured.stageNote)}</p>
       </div>
     </div>
     <ul class="card-grid card-grid--4" role="list">${cards}</ul>

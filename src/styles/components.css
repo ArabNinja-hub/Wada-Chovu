@@ -1,4 +1,4 @@
-/* Reusable components: buttons, header, media, cards, forms, placeholders and stage slots. */
+/* Reusable components: buttons, header, cards, forms and placeholders. */
 
 /* Icons -------------------------------------------------------------------- */
 
@@ -521,34 +521,6 @@ html:not(.js) .primary-nav__cta {
   width: auto;
 }
 
-/* Media (photos and illustrations) ---------------------------------------- */
-
-.media {
-  position: relative;
-  width: 100%;
-  aspect-ratio: var(--ratio, 4 / 3);
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(160deg, var(--c-mist) 0%, var(--c-mist-2) 100%);
-}
-
-.media img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s var(--ease);
-}
-
-.media--arch {
-  border-radius: 50% 50% var(--radius-lg) var(--radius-lg) / 34% 34% var(--radius-lg) var(--radius-lg);
-}
-
-.media--rounded {
-  border-radius: var(--radius-xl);
-}
-
 /* Placeholder markers ----------------------------------------------------- */
 
 /* Inline marker for unconfirmed text, for example "[Street address]". */
@@ -560,14 +532,7 @@ html:not(.js) .primary-nav__cta {
   font-style: normal;
 }
 
-/* Corner badge on placeholder images. */
-/* Arch frames curve at the top, so the badge sits on the flat centre line instead. */
-.media--arch > .ph-badge {
-  top: 1.25rem;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
+/* Corner badge on placeholder content. */
 .ph-badge {
   position: absolute;
   top: 0.75rem;
@@ -622,14 +587,6 @@ html:not(.js) .primary-nav__cta {
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lift);
-}
-
-.product-card .media {
-  border-radius: 0;
-}
-
-.product-card:hover .media img {
-  transform: scale(1.04);
 }
 
 .product-card__body {
@@ -841,56 +798,6 @@ html:not(.js) .primary-nav__cta {
   width: 1px;
   height: 1px;
   overflow: hidden;
-}
-
-/* Stage slots (3D anchors with static fallbacks) ------------------------- */
-
-.stage-slot {
-  position: relative;
-  width: 100%;
-  aspect-ratio: var(--ratio, 4 / 3);
-}
-
-.stage-fallback {
-  position: absolute;
-  inset: 0;
-  transition: opacity 0.7s var(--ease);
-}
-
-.stage-fallback img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Badge for stand-in content. It sits on the slot, above both the fallback and the 3D canvas. */
-.stage-slot > .ph-badge {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  z-index: 6;
-}
-
-/* Caption under a placeholder 3D scene. */
-.stage-note {
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
-  color: var(--c-ink-2);
-}
-
-/* Once the 3D scene renders, the static fallback fades out. */
-.stage-slot.is-3d .stage-fallback {
-  opacity: 0;
-}
-
-/* Single shared WebGL canvas. It is fixed over the page and ignores pointer input. */
-.stage-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
 }
 
 /* Contact list ------------------------------------------------------------ */
