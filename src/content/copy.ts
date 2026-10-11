@@ -23,7 +23,6 @@ export const copy = {
     primaryCta: 'Send an enquiry',
     secondaryCta: 'Browse categories',
     points: ['Retail shop in Luanshya', 'Shop in person in Luanshya', 'Enquire before you visit'],
-    visualLabel: 'Decorative 3D view of a stand-in photograph of a shop counter, with depth. It is not a photograph of the shop.',
   },
 
   about: {
@@ -48,15 +47,6 @@ export const copy = {
     title: 'Featured products',
     lead: 'Featured products will be listed here once they are confirmed. Ask about availability, sizes and prices before you visit.',
     cta: 'Enquire about this product',
-    visualLabel: 'Decorative 3D view of placeholder packaging models on a display base. They are not products for sale.',
-    stageNote: 'Placeholder 3D packaging, shown for layout only. These are not products for sale.',
-  },
-
-  assembly: {
-    eyebrow: 'Showcase',
-    title: 'Pieces brought together',
-    lead: 'Stand-in photographs, arranged as you scroll. They are shown for layout only and do not describe what we sell.',
-    visualLabel: 'Stand-in photographs of bicycles, drinks and shelved goods. They move into one arrangement as you scroll.',
   },
 
   scale: {
@@ -64,7 +54,6 @@ export const copy = {
     title: 'Look around the shop before you choose.',
     lead: 'Walk the shop floor, take a closer look and ask us about anything you are unsure of before you buy.',
     points: ['Browse the shop floor in person', 'Ask about a product before you visit', 'Contact us before you make the trip'],
-    visualLabel: 'Decorative 3D view of a stand-in photograph of stacked canned goods. It is not a photograph of the shop.',
   },
 
   why: {

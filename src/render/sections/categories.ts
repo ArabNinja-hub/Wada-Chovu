@@ -2,7 +2,6 @@ import { categories, type ProductCategory } from '../../content/products.ts';
 import { copy } from '../../content/copy.ts';
 import { esc } from '../html.ts';
 import { icon } from '../icons.ts';
-import { renderImage } from '../media.ts';
 import { placeholderText, sectionHead } from '../ui.ts';
 
 /** Product category card. Used by the categories grid. */
@@ -12,7 +11,6 @@ export function renderCategoryCard(category: ProductCategory, index: number): st
   return `
 <li class="grid__item" data-reveal style="--d: ${index * 80}ms">
   <article class="product-card">
-    ${renderImage(category.image, { className: 'product-card__media', ratio: '4 / 3' })}
     <div class="product-card__body">
       <h3 class="h4">${name}</h3>
       <p class="product-card__text">${summary}</p>

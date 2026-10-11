@@ -180,8 +180,7 @@ check(
 
 // Summary -------------------------------------------------------------------------
 
-// The site uses real photographs and GLB models only. Fail if any SVG file or SVG markup is
-// shipped, so vector artwork cannot creep back in.
+// Fail if any SVG file or SVG markup is shipped, so vector artwork cannot creep back in.
 function walk(dir) {
   const out = [];
   for (const name of readdirSync(dir)) {
@@ -206,7 +205,7 @@ check(
   `SVG markup found in: ${svgMarkup.map(rel).join(', ')}`,
 );
 
-// 7. Enquiries, stand-in photographs and the business name -----------------------
+// 7. Enquiries and the business name --------------------------------------------
 
 /** Every shipped HTML and JS file, read once for the text checks below. */
 const shippedText = shipped
@@ -242,25 +241,6 @@ if (html.includes('data-channel="unconfigured"')) {
 } else {
   console.log('  ok  enquiry form is connected (endpoint or real enquiry email)');
 }
-
-// Every stand-in photograph is marked as a placeholder and names its source and licence.
-const assetsSource = readFileSync(join(repoRoot, 'src/content/assets.ts'), 'utf8');
-const assetBlocks = [...assetsSource.matchAll(/^  '([\w.]+)': \{([\s\S]*?)^  \},/gm)];
-const photoBlocks = assetBlocks.filter(([, , body]) => /src: '\/media\/photos\//.test(body));
-const unmarked = photoBlocks.filter(([, key, body]) => !/placeholder: true/.test(body)).map(([, key]) => key);
-const unsourced = photoBlocks
-  .filter(([, , body]) => !(/source: /.test(body) && /license: /.test(body)))
-  .map(([, key]) => key);
-check(
-  photoBlocks.length > 0 && unmarked.length === 0,
-  `all ${photoBlocks.length} photo entries are marked placeholder: true (stand-ins)`,
-  `photo entries not marked placeholder: true: ${unmarked.join(', ') || 'none found'}`,
-);
-check(
-  photoBlocks.length > 0 && unsourced.length === 0,
-  'every photo entry names its source and licence',
-  `photo entries without source and licence: ${unsourced.join(', ')}`,
-);
 
 // The business is called Chovu Chovu Brothers Ltd. The old name must not appear as visible text.
 const oldName = /wada\s+chovu/i;
